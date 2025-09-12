@@ -46,7 +46,6 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const fetchLimitData = async (showLoading = true) => {
-    if (!userInfo?.id) return;
     
     try {
       if (showLoading) {
@@ -54,7 +53,7 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
       }
       
       // 송금 한도 조회
-      const limitResponse = await api.getUserRemittanceLimit(userInfo.id);
+      const limitResponse = await api.getUserRemittanceLimit();
       setLimit(limitResponse);
       
       setError(null);
@@ -69,11 +68,10 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
   };
 
   const fetchRequestData = async () => {
-    if (!userInfo?.id) return;
     
     try {
       // 한도 변경 신청 데이터 조회 (파일 정보 포함)
-      const requests = await api.getUserRemittanceLimitRequests(userInfo.id);
+      const requests = await api.getUserRemittanceLimitRequests();
       const latestPendingRequest = requests.find(request => request.status === 'PENDING' || request.status === 'REJECTED');
       if (latestPendingRequest) {
         setPendingRequest(latestPendingRequest);
@@ -100,7 +98,10 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
   };
 
   useEffect(() => {
-    fetchData();
+    if(userInfo){
+      fetchData();
+    }
+    
   }, [userInfo?.id]);
 
   useEffect(() => {

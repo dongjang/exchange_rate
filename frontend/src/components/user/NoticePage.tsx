@@ -71,7 +71,9 @@ const NoticePage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchNoticeList();
+    if(userInfo?.id){
+      fetchNoticeList();
+    }
   }, [searchRequest]);
 
   // 검색 조건이 변경될 때만 검색 실행 (페이지 변경 제외)

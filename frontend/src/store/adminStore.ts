@@ -22,7 +22,7 @@ export interface AdminAuthState {
 // 관리자 인증 상태
 export const adminAuthAtom = atom<AdminAuthState>({
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
 });
 
 // 관리자 정보

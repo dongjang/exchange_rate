@@ -54,7 +54,7 @@ function UserModal({ isOpen, onClose }: UserModalProps) {
     try {
       if (selectedUser?.id) {
         // 수정 모드만 허용
-        await api.updateUser(selectedUser.id, formData);
+        await api.updateUser(formData);
         // API 호출이 성공하면 formData로 users 상태 업데이트
         const updatedUser = { ...selectedUser, ...formData };
         // Header의 사용자 정보도 함께 업데이트

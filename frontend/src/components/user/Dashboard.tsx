@@ -99,7 +99,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       if (!userInfo?.id) return;
       
       const response = await api.searchRemittanceHistory({
-        userId: userInfo.id,
         recipient: '',
         currency: '',
         status: '',
@@ -183,12 +182,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    getRates();
-    getUserFavoriteCurrencyList();
-    getRecentRemittances();
-    getImportantNotices();
-    getDashboardNotices();
-    getDashboardQna();
+    if(user?.id || userInfo?.id){
+      getRates();
+      getUserFavoriteCurrencyList();
+      getRecentRemittances();
+      getImportantNotices();
+      getDashboardNotices();
+      getDashboardQna();
+    }
   }, [user?.id, userInfo?.id]);
 
   // 환율 데이터 처리

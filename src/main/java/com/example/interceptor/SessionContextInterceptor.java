@@ -1,8 +1,8 @@
 package com.example.interceptor;
 
+import com.example.common.service.RedisService;
 import com.example.context.SessionContext;
-import com.example.enums.SessionType;
-import com.example.service.RedisService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -30,22 +30,19 @@ public class SessionContextInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         
         try {
-            // URL 패턴에 따라 세션 타입 결정
-            SessionType sessionType = determineSessionType(requestURI);
-            
             // 세션 정보 조회
-            String sessionId = extractSessionId(request, sessionType);
+            String sessionId = extractSessionId(request);
             if (sessionId != null) {
-                Object sessionData = getSessionData(sessionType, sessionId);
+                Object sessionData = getSessionData(sessionId);
                 
                 if (sessionData != null) {
                     // SessionContext 설정
                     SessionContext context = new SessionContext();
-                    setSessionContextFromData(context, sessionData, sessionType);
+                    setSessionContextFromData(context, sessionData);
                     SessionContext.setContext(context);
                     
-                    log.info("SessionContext 설정 완료 - URI: {}, SessionType: {}, UserId: {}, AdminId: {}", 
-                            requestURI, sessionType, context.getUserId(), context.getAdminId());
+                    log.info("SessionContext 설정 완료 - URI: {}, UserId: {}", 
+                            requestURI, context.getUserId());
                 }
             }
             
@@ -62,69 +59,40 @@ public class SessionContextInterceptor implements HandlerInterceptor {
         SessionContext.clear();
     }
 
-    /**
-     * URL 패턴에 따라 세션 타입 결정
-     */
-    private SessionType determineSessionType(String requestURI) {
-        if (requestURI.startsWith("/api/admin")) {
-            return SessionType.ADMIN;
-        } else {
-            return SessionType.USER;
-        }
-    }
 
     /**
      * HttpSession에서 세션 정보 추출
      */
-    private String extractSessionId(HttpServletRequest request, SessionType sessionType) {
+    private String extractSessionId(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            if (SessionType.ADMIN.equals(sessionType)) {
-                // 관리자 세션 ID 가져오기
-                return (String) session.getAttribute("adminSessionId");
-            } else {
-                // 사용자 세션 ID 가져오기
-                return (String) session.getAttribute("userSessionId");
-            }
+            // 사용자 세션 ID만 가져오기
+            return (String) session.getAttribute("userSessionId");
         }
         
         return null;
     }
 
     /**
-     * 세션 타입에 따라 Redis에서 세션 데이터 조회
+     * Redis에서 세션 데이터 조회
      */
-    private Object getSessionData(SessionType sessionType, String sessionId) {
-        if (SessionType.ADMIN.equals(sessionType)) {
-            return redisService.getAdminSession(sessionId);
-        } else {
-            return redisService.getUserSession(sessionId);
-        }
+    private Object getSessionData(String sessionId) {
+        // 사용자 세션만 조회
+        return redisService.getUserSession(sessionId);
     }
 
     /**
      * 세션 데이터를 SessionContext에 설정
      */
     @SuppressWarnings("unchecked")
-    private void setSessionContextFromData(SessionContext context, Object sessionData, SessionType sessionType) {
+    private void setSessionContextFromData(SessionContext context, Object sessionData) {
         if (sessionData instanceof Map) {
             Map<String, Object> data = (Map<String, Object>) sessionData;
             
-            context.setSessionType(sessionType);
-            
-            if (SessionType.USER.equals(sessionType)) {
-                // 사용자 정보 설정
-                context.setUserId(getLongValue(data, "userId"));
-                context.setUserEmail(getStringValue(data, "userEmail"));
-                context.setUserName(getStringValue(data, "userName"));
-            } else if (SessionType.ADMIN.equals(sessionType)) {
-                // 관리자 정보 설정
-                context.setAdminId(getLongValue(data, "adminId"));
-                context.setAdminEmail(getStringValue(data, "adminEmail"));
-                context.setAdminName(getStringValue(data, "adminName"));
-                context.setAdminRole(getStringValue(data, "adminRole"));
-                context.setAdminStatus(getStringValue(data, "adminStatus"));
-            }
+            // 사용자 정보 설정
+            context.setUserId(getLongValue(data, "userId"));
+            context.setUserEmail(getStringValue(data, "userEmail"));
+            context.setUserName(getStringValue(data, "userName"));
         }
     }
 

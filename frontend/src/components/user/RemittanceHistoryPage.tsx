@@ -62,7 +62,6 @@ function RemittanceHistoryPage() {
 
       // 백엔드 API 호출 (페이징 포함)
       const response = await api.searchRemittanceHistory({
-        userId: userInfo.id,
         recipient: filters.recipient,
         currency: filters.currency,
         status: filters.status,
@@ -104,17 +103,13 @@ function RemittanceHistoryPage() {
     }
   }, [currentPage, pageSize, userInfo?.id]);
 
-  // 필터 변경 시 자동 검색 (currency, status, sortOrder만 즉시 검색)
+  // 필터 변경 시 자동 검색 (상태 업데이트 후 검색 실행)
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (userInfo?.id) {
-        setCurrentPage(1);
-        fetchRemittances();
-      }
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(timeoutId);
-  }, [filters.currency, filters.status, filters.sortOrder, userInfo?.id]);
+    if (userInfo?.id) {
+      setCurrentPage(1);
+      fetchRemittances();
+    }
+  }, [filters, userInfo?.id]);
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
@@ -161,46 +156,7 @@ function RemittanceHistoryPage() {
     };
     setFilters(newFilters);
     setCurrentPage(1); // 기간 변경 시 첫 페이지로 이동
-    
-    // 새로운 필터 값으로 즉시 검색 실행
-    const searchWithNewFilters = async () => {
-      try {
-        setLoading(true);
-        
-        if (!userInfo?.id) {
-          setError('사용자 정보를 가져올 수 없습니다.');
-          setRemittances([]);
-          return;
-        }
-
-        const response = await api.searchRemittanceHistory({
-          userId: userInfo.id,
-          recipient: newFilters.recipient,
-          currency: newFilters.currency,
-          status: newFilters.status,
-          minAmount: newFilters.minAmount,
-          maxAmount: newFilters.maxAmount,
-          startDate: newFilters.startDate,
-          endDate: newFilters.endDate,
-          sortOrder: newFilters.sortOrder,
-          page: 0, // 첫 페이지
-          size: pageSize
-        });
-        
-        setRemittances(response.content);
-        setTotalItems(response.totalElements);
-        setTotalPages(response.totalPages);
-        setError(null);
-      } catch (err) {
-        console.error('송금 이력 조회 실패:', err);
-        setError('송금 이력을 불러오는데 실패했습니다.');
-        setRemittances([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    searchWithNewFilters();
+    // useEffect가 filters 변경을 감지해서 자동으로 검색 실행
   };
 
 
@@ -245,10 +201,9 @@ function RemittanceHistoryPage() {
         background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%)', 
         border: '1.5px solid #e0e7ef', 
         padding: '0 0 0 0', 
-        overflow: 'hidden',
         marginBottom: '24px'
       }}>
-        <div style={{ padding: '0', overflow: 'hidden' }}>
+        <div style={{ padding: '0'}}>
           <RemittanceHistoryFilter 
             filters={filters}
             onFilterChange={handleFilterChange}

@@ -1,6 +1,7 @@
 import type { Getter, Setter } from 'jotai';
 import { atom } from 'jotai';
 import { api } from '../services/api';
+import { userInfoAtom } from './userStore';
 
 export type Country = {
   code: string;
@@ -22,7 +23,7 @@ export const favoriteCurrenciesAtom = atom<string[]>([]);
 export const getRemittanceCountries = atom(
   null,
   async (get: Getter, set: Setter) => {
-    if (!get(remittanceCountriesAtom)) {
+    if (!get(remittanceCountriesAtom) && get(userInfoAtom)?.id) {
       const data = await api.getRemittanceCountries();
       set(remittanceCountriesAtom, data);
     }
@@ -34,7 +35,7 @@ export const updateExchangeRatesAtom = atom(
   null,
   async (get: Getter, set: Setter) => {
     const currentRates = get(exchangeRatesAtom);
-    if (Object.keys(currentRates).length === 0) {
+    if (Object.keys(currentRates).length === 0 && get(userInfoAtom)?.id) {
       const response = await api.getExchangeRates();
       if (response.success && response.rates) {
         set(exchangeRatesAtom, response.rates as { [key: string]: number });

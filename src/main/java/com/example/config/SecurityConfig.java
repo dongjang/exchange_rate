@@ -29,7 +29,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain userFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
-            .securityMatcher("/api/users/**", "/oauth2/**", "/login/**")
+            .securityMatcher("/api/**", "/oauth2/**", "/login/**")
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
@@ -39,6 +39,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/remittance/**").authenticated()
                 .requestMatchers("/api/users/qna/**").authenticated()
                 .requestMatchers("/api/users/**").authenticated()
+                .requestMatchers("/api/files/*/download").authenticated()
+                .requestMatchers("/api/files/*/info").authenticated()
+                .requestMatchers("/api/files/**").authenticated()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/health/**").permitAll()
                 .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -60,65 +65,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
-        http
-            .securityMatcher("/api/admin/**")
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/admin/auth/**").permitAll()
-                .requestMatchers("/api/admin/dashboard/**").authenticated()
-                .requestMatchers("/api/admin/users/**").authenticated()
-                .requestMatchers("/api/admin/remittance/**").authenticated()
-                .requestMatchers("/api/admin/remittance-limits/**").authenticated()
-                .requestMatchers("/api/admin/notices/**").authenticated()
-                .requestMatchers("/api/admin/qna/**").authenticated()
-                .requestMatchers("/api/admin/countries/**").authenticated()
-                .requestMatchers("/api/admin/banks/**").authenticated()
-                .requestMatchers("/api/admin/admins/**").authenticated()
-                .requestMatchers("/api/admin/**").authenticated()
-                .anyRequest().denyAll()
-            );
-        
-        return http.build();
-    }
-
-    @Bean
-    public SecurityFilterChain fileFilterChain(HttpSecurity http) throws Exception {
-        http
-            .securityMatcher("/api/files/**")
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/files/*/download").authenticated()
-                .requestMatchers("/api/files/*/base64").authenticated()
-                .requestMatchers("/api/files/*/info").authenticated()
-                .requestMatchers("/api/files/**").authenticated()
-                .anyRequest().denyAll()
-            );
-        
-        return http.build();
-    }
-
-    @Bean
-    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
-        http
-            .securityMatcher("/api/public/**", "/health/**", "/actuator/**")
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                // 헬스체크
-                .requestMatchers("/health/**").permitAll()
-                // 공개 API
-                .requestMatchers("/api/public/**").permitAll()
-                // 운영 환경에서만 actuator 허용 (개발 환경에서는 비활성화)
-                .requestMatchers("/actuator/**").denyAll()
-                .anyRequest().denyAll()
-            );
-        
-        return http.build();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

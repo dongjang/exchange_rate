@@ -67,7 +67,9 @@ const QnaPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchQnaList();
+    if(userInfo?.id){
+      fetchQnaList();
+    }
   }, [searchRequest]);
 
   // 검색 조건이 변경될 때만 검색 실행 (페이지 변경 제외)

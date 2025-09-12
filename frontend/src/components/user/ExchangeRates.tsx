@@ -73,7 +73,10 @@ export function ExchangeRates({ user }: { user: User | null }) {
   };
 
   useEffect(() => {
-    getUserFavoriteCurrencyList();
+    if(user?.id){
+      getUserFavoriteCurrencyList();
+    }
+
   }, [user?.id]);
 
   const handleFavoriteClick = async (currency: string, isFavorite: boolean) => {
@@ -81,7 +84,6 @@ export function ExchangeRates({ user }: { user: User | null }) {
       if (isFavorite) {
         await api.saveFavoriteCurrency({
           type: 'DEL',
-          user_id: user?.id || 0,
           currency_code: currency,
         });
         // atom 업데이트
@@ -89,7 +91,6 @@ export function ExchangeRates({ user }: { user: User | null }) {
       } else {
         await api.saveFavoriteCurrency({
           type: 'ADD',
-          user_id: user?.id || 0,
           currency_code: currency,
         });
         // atom 업데이트
@@ -117,15 +118,41 @@ export function ExchangeRates({ user }: { user: User | null }) {
 
   useEffect(() => {
     // 환율 조회
-    getRates();
+    if(user?.id){
+      getRates();
+    }
   }, []);
 
   // 송금 가능 국가 선택 시, atom이 비어 있으면 get
   useEffect(() => {
-    if (countryFilter === 'remittance' && !remittanceCountries) {
+    if (user?.id && countryFilter === 'remittance' && !remittanceCountries) {
       getRemitCountries();
     }
   }, [countryFilter, remittanceCountries, getRemitCountries]);
+
+  // 송금 가능 국가로 변경 시 검색 결과가 없으면 검색어 초기화
+  useEffect(() => {
+    if (countryFilter === 'remittance' && remittanceCountries) {
+      const countryList = remittanceCountries;
+      const hasSearchResult = countryList.some(c => {
+        if (!search.trim()) return true;
+        const countryText = c.countryName || '';
+        const currencyName = c.codeName || '';
+        const codeText = c.code;
+        const q = search.trim().toLowerCase();
+        return (
+          countryText.toLowerCase().includes(q) ||
+          currencyName.toLowerCase().includes(q) ||
+          codeText.toLowerCase().includes(q)
+        );
+      });
+      
+      // 검색 결과가 없으면 검색어 초기화
+      if (!hasSearchResult) {
+        setSearch('');
+      }
+    }
+  }, [countryFilter, remittanceCountries, search]);
 
   // react-select용 옵션 생성
   const searchOptions = (() => {

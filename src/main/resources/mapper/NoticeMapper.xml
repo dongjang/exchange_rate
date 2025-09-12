@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.NoticeMapper">
+<mapper namespace="com.example.support.mapper.NoticeMapper">
 
     <select id="getNoticeList" parameterType="NoticeSearchRequest" resultType="NoticeResponse">
         SELECT 
@@ -80,30 +80,6 @@
                 AND (n.notice_end_at IS NULL OR n.notice_end_at &gt;= NOW())
             </if>
         </where>
-    </select>
-
-    <!-- 공지사항 조회수 TOP5 조회 (사용자용 - 날짜 조건 적용) -->
-    <select id="getTop5Notices" resultType="NoticeResponse">
-        SELECT 
-            n.id,
-            n.title,
-            n.content,
-            n.status,
-            n.priority,
-            n.notice_start_at as noticeStartAt,
-            n.notice_end_at as noticeEndAt,
-            n.view_count as viewCount,
-            n.created_at as createdAt,
-            n.updated_at as updatedAt,
-            n.created_user_id as createdUserId,
-            u.name as createdUserName
-        FROM notice n
-        LEFT JOIN user u ON n.created_user_id = u.id
-        WHERE n.status = 'ACTIVE'
-          AND (n.notice_start_at IS NULL OR n.notice_start_at &lt;= NOW())
-          AND (n.notice_end_at IS NULL OR n.notice_end_at &gt;= NOW())
-        ORDER BY n.view_count DESC
-        LIMIT 5
     </select>
 
 </mapper>

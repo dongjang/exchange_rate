@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import { getRemittanceCountries, remittanceCountriesAtom } from '../../store/countryStore';
 import './CustomCalendar.css';
@@ -42,8 +41,6 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
   const [startDate, setStartDate] = useState<Date | null>(filters.startDate ? new Date(filters.startDate) : null);
   const [endDate, setEndDate] = useState<Date | null>(filters.endDate ? new Date(filters.endDate) : null);
   const [isMobile, setIsMobile] = useState(false);
-  const location = useLocation();
-  const isAdminPage = location.pathname === '/admin/remittance';
 
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -112,37 +109,32 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
   };
 
   const handleInputChange = (field: string, value: string) => {
-    // react-select, 전체 상태, 정렬은 즉시 검색
-    if (field === 'currency' || field === 'status' || field === 'sortOrder') {
-      onFilterChange({
-        ...filters,
-        [field]: value
-      });
-    } else {
-      // 받는 사람, 최소 금액, 최대 금액은 로컬 상태만 업데이트
-      onFilterChange({
-        ...filters,
-        [field]: value
-      });
-    }
+    const newFilters = {
+      ...filters,
+      [field]: value
+    };
+    
+    onFilterChange(newFilters);
   };
 
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
-    // 날짜는 필터 상태만 업데이트 (검색 이벤트 없음)
-    onFilterChange({
+    // 날짜 변경 시 즉시 검색
+    const newFilters = {
       ...filters,
       startDate: date ? date.toISOString().split('T')[0] : ''
-    });
+    };
+    onFilterChange(newFilters);
   };
 
   const handleEndDateChange = (date: Date | null) => {
     setEndDate(date);
-    // 날짜는 필터 상태만 업데이트 (검색 이벤트 없음)
-    onFilterChange({
+    // 날짜 변경 시 즉시 검색
+    const newFilters = {
       ...filters,
       endDate: date ? date.toISOString().split('T')[0] : ''
-    });
+    };
+    onFilterChange(newFilters);
   };
 
   const handleQuickDateRange = (range: string) => {
@@ -185,12 +177,13 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
       onQuickDateRangeChange(range);
     } else {
       // 기존 방식 (fallback)
-      onFilterChange({
+      const newFilters = {
         ...filters,
         startDate: start.toISOString().split('T')[0],
         endDate: end.toISOString().split('T')[0],
         quickDateRange: range
-      });
+      };
+      onFilterChange(newFilters);
     }
   };
 
@@ -210,7 +203,7 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
       startDate: '',
       endDate: '',
       quickDateRange: '', // 초기화 시 빠른 날짜 범위 필터도 초기화
-      sortOrder: 'DESC' // 기본값으로 초기화
+      sortOrder: 'latest' // 기본값으로 초기화
     });
   };
 
@@ -224,9 +217,9 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
     }
   };
 
-  // 관리자 페이지에서 반응형일 때 텍스트 줄이기
+  // 반응형일 때 텍스트 줄이기
   const getPlaceholderText = (defaultText: string, shortText: string) => {
-    if (isAdminPage && isMobile) {
+    if (isMobile) {
       return shortText;
     }
     return defaultText;
@@ -314,7 +307,12 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
           options={currencyOptions}
           value={currencyOptions.find(opt => opt.value === filters.currency) || null}
           onChange={opt => {
-            handleInputChange('currency', opt?.value || '');
+            const newValue = opt?.value || '';
+            const newFilters = {
+              ...filters,
+              currency: newValue
+            };
+            onFilterChange(newFilters);
           }}
           placeholder="수취 통화"
           isSearchable
@@ -352,7 +350,12 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
         <select
           value={filters.status}
           onChange={(e) => {
-            handleInputChange('status', e.target.value);
+            const newValue = e.target.value;
+            const newFilters = {
+              ...filters,
+              status: newValue
+            };
+            onFilterChange(newFilters);
           }}
           style={{
             width: '100%',
@@ -381,6 +384,7 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
           <option value="">{getPlaceholderText("전체 상태", "전체")}</option>
           <option value="COMPLETED">완료</option>
           <option value="WAITING">대기</option>
+          <option value="FAILED">실패</option>
         </select>
       </div>
 
@@ -589,7 +593,7 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
               position: 'absolute', 
               top: '110%', 
               left: 0, 
-              zIndex: 10, 
+              zIndex: 99999, 
               boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
               borderRadius: '16px',
               background: '#fff',
@@ -716,10 +720,12 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
                 if (onSortChange) {
                   onSortChange(e.target.value);
                 } else {
-                  onFilterChange({
+                  const newValue = e.target.value;
+                  const newFilters = {
                     ...filters,
-                    sortOrder: e.target.value
-                  });
+                    sortOrder: newValue
+                  };
+                  onFilterChange(newFilters);
                 }
               }}
               style={{

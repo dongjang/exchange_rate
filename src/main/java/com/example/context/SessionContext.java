@@ -1,6 +1,5 @@
 package com.example.context;
 
-import com.example.enums.SessionType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,15 +18,6 @@ public class SessionContext {
     private Long userId;
     private String userEmail;
     private String userName;
-    
-    // 관리자 정보
-    private Long adminId;
-    private String adminEmail;
-    private String adminName;
-    private String adminRole;
-    private String adminStatus;
-    
-    private SessionType sessionType;
     
     /**
      * 컨텍스트 설정
@@ -74,65 +64,5 @@ public class SessionContext {
         return context != null ? context.getUserName() : null;
     }
     
-    /**
-     * 세션 타입 조회
-     */
-    public static SessionType getCurrentSessionType() {
-        SessionContext context = getContext();
-        return context != null ? context.getSessionType() : null;
-    }
     
-    /**
-     * 사용자 세션인지 확인
-     */
-    public static boolean isUserSession() {
-        return SessionType.USER.equals(getCurrentSessionType());
-    }
-    
-    /**
-     * 관리자 세션인지 확인
-     */
-    public static boolean isAdminSession() {
-        return SessionType.ADMIN.equals(getCurrentSessionType());
-    }
-    
-    /**
-     * 관리자 ID 조회
-     */
-    public static Long getCurrentAdminId() {
-        SessionContext context = getContext();
-        return context != null ? context.getAdminId() : null;
-    }
-    
-    /**
-     * 관리자 이메일 조회
-     */
-    public static String getCurrentAdminEmail() {
-        SessionContext context = getContext();
-        return context != null ? context.getAdminEmail() : null;
-    }
-    
-    /**
-     * 관리자 이름 조회
-     */
-    public static String getCurrentAdminName() {
-        SessionContext context = getContext();
-        return context != null ? context.getAdminName() : null;
-    }
-    
-    /**
-     * 관리자 권한 조회
-     */
-    public static String getCurrentAdminRole() {
-        SessionContext context = getContext();
-        return context != null ? context.getAdminRole() : null;
-    }
-    
-    /**
-     * 관리자 상태 조회
-     */
-    public static String getCurrentAdminStatus() {
-        SessionContext context = getContext();
-        return context != null ? context.getAdminStatus() : null;
-    }
 }

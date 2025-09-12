@@ -22,14 +22,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(sessionContextInterceptor)
                 .addPathPatterns("/api/**") // 모든 API 요청에 적용
                 .excludePathPatterns(
-                    "/api/auth/login",      // 로그인 API 제외
-                    "/api/auth/admin/login", // 관리자 로그인 API 제외
-                    "/api/auth/logout",     // 로그아웃 API 제외
-                    "/api/auth/admin/logout", // 관리자 로그아웃 API 제외
                     "/api/oauth2/**",       // OAuth2 관련 API 제외
                     "/api/users/auth/**",   // 사용자 인증 API 제외
-                    "/api/admin/login",     // 관리자 로그인 API 제외
-                    "/api/admin/logout",    // 관리자 로그아웃 API 제외
+                    "/api/public/**",       // 공개 API 제외
+                    "/health/**",           // 헬스체크 제외
                     "/static/**",           // 정적 리소스 제외
                     "/css/**",              // CSS 파일 제외
                     "/js/**",               // JavaScript 파일 제외

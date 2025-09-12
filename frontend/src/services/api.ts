@@ -72,92 +72,21 @@ export const api = {
     return response.data;
   },
 
-  // 관리자 사용자 관리 탭 검색
-  async searchUsers(searchRequest: any): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/admin/users/search`, searchRequest, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
-  // 특정 사용자 조회
+  // 관리자 페이지에서 특정 사용자 조회
   async getUserById(id: number): Promise<any> {
     const response = await axios.get(`${API_BASE_URL}/users/users/${id}`, { withCredentials: true });
     return response.data;
   },
 
-  // 관리자 사용자 관리 탭 특정 사용자 조회
-  async getAdminUserById(id: number): Promise<any> {
-    const response = await axios.get(`${API_BASE_URL}/admin/users/${id}`, { withCredentials: true });
-    return response.data;
-  },
-
-  // 관리자 사용자 관리 탭 특정 사용자 상태 업데이트
-  async updateUserStatus(id: number, status: string): Promise<any> {
-    const response = await axios.put(`${API_BASE_URL}/admin/users/${id}/status`, { status }, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
   // 사용자 정보 수정
-  async updateUser(id: number, userData: any): Promise<any> {
-    const response = await axios.put(`${API_BASE_URL}/users/users/${id}`, userData, {
+  async updateUser(userData: any): Promise<any> {
+    const response = await axios.put(`${API_BASE_URL}/users/users/update`, userData, {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true,
     });
     return response.data;
   },
 
-  // 관리자 관리 탭 검색
-  async searchAdmins(searchRequest: any): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/admin/search`, searchRequest, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
-  // 특정 관리자 조회
-  async getAdminById(id: number): Promise<any> {
-    const response = await axios.get(`${API_BASE_URL}/admin/${id}`, { withCredentials: true });
-    return response.data;
-  },
-
-  // 관리자 등록
-  async createAdmin(adminData: any): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/admin`, adminData, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
-  // 관리자 수정
-  async updateAdmin(id: number, adminData: any): Promise<any> {
-    const response = await axios.put(`${API_BASE_URL}/admin/${id}`, adminData, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
-  // 관리자 상태 업데이트
-  async updateAdminStatus(id: number, status: string): Promise<any> {
-    const response = await axios.put(`${API_BASE_URL}/admin/${id}/status`, { status }, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true,
-    });
-    return response.data;
-  },
-
-  // 관리자 아이디 중복 확인
-  async checkAdminIdDuplicate(adminId: string): Promise<any> {
-    const response = await axios.get(`${API_BASE_URL}/admin/check-admin-id/${adminId}`, { withCredentials: true });
-    return response.data;
-  },
 
   // 인증 관련 API
   async authSuccess(): Promise<{ success: boolean; message: string; user?: AuthUser }> {
@@ -179,7 +108,7 @@ export const api = {
   },
 
   // 관심 환율 등록
-  async saveFavoriteCurrency(params: { type: string; user_id: number; currency_code: string }): Promise<void> {
+  async saveFavoriteCurrency(params: { type: string; currency_code: string }): Promise<void> {
     await axios.post(`${API_BASE_URL}/users/exchange/saveFavoriteRates`, params, { withCredentials: true });
   },
 
@@ -211,9 +140,9 @@ export const api = {
     },
 
   // 내 은행/계좌 정보 조회
-  async getMyBankAccount(userId: number): Promise<MyBankAccount | null> {
+  async getMyBankAccount(): Promise<MyBankAccount | null> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/users/banks/${userId}`, { withCredentials: true });
+      const response = await axios.get(`${API_BASE_URL}/users/banks`, { withCredentials: true });
       return response.data;
     } catch (e) {
       return null;
@@ -221,32 +150,9 @@ export const api = {
   },
 
   // 내 은행/계좌 정보 저장/수정
-  async saveMyBankAccount(params: { userId: number,bankCode:string, accountNumber:string }): Promise<void> {
+  async saveMyBankAccount(params: { bankCode:string, accountNumber:string }): Promise<void> {
     await axios.post(`${API_BASE_URL}/users/banks`, params, { withCredentials: true });
   },
-
-  // 송금 이력 조회 (기존)
-  /*
-  async getRemittanceHistory(params: {
-    page: number;
-    size: number;
-    startDate?: string;
-    endDate?: string;
-    status?: string;
-    currency?: string;
-  }): Promise<{
-    content: any[];
-    totalPages: number;
-    totalElements: number;
-    currentPage: number;
-  }> {
-    const response = await axios.get(`${API_BASE_URL}/remittance/history`, {
-      params,
-      withCredentials: true,
-    });
-    return response.data;
-  },
-  */
 
   // 송금 생성
   async createRemittance(remittanceData: any): Promise<any> {
@@ -266,7 +172,6 @@ export const api = {
 
   // 송금 이력 검색 (페이징 포함)
   async searchRemittanceHistory(params: {
-    userId: number;
     recipient?: string;
     currency?: string;
     status?: string;
@@ -292,47 +197,9 @@ export const api = {
     return response.data;
   },
 
-  // 대시보드 통계 조회
-  async getDashboardStats(): Promise<any> {
-    const response = await axios.get(`${API_BASE_URL}/admin/dashboard/stats`, { withCredentials: true });
-    return response.data;
-  },
-  
-  // 관리자용 송금 이력 조회 (count와 list 함께 반환)
-  async getAdminRemittanceHistory(params: any): Promise<{list: any[], count: number}> {
-    const response = await axios.post(`${API_BASE_URL}/admin/remittances/search`, params, { withCredentials: true });
-    return response.data;
-  },
-  
-  // 관리자용 송금 이력 개수 조회 - 삭제됨 (getAdminRemittanceHistory에서 함께 반환)
-  // async getAdminRemittanceHistoryCount(params: any): Promise<number> {
-  //   const response = await axios.post(`${API_BASE_URL}/remittances/admin/count`, params, { withCredentials: true });
-  //   return response.data;
-  // },
-
-  // 기본 송금 한도 관련 API
-  async getDefaultRemittanceLimit(): Promise<any> {
+  async getUserRemittanceLimit(): Promise<any> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/admin/default-remittance-limit`, { withCredentials: true });
-      return response.data;
-    } catch (error) {
-      console.error('기본 한도 조회 실패:', error);
-      throw error;
-    }
-  },
-
-  async updateDefaultRemittanceLimit(data: any): Promise<void> {
-    try {
-      await axios.put(`${API_BASE_URL}/admin/default-remittance-limit`, data, { withCredentials: true });
-    } catch (error) {
-      console.error('기본 한도 업데이트 실패:', error);
-      throw error;
-    }
-  },
-
-  async getUserRemittanceLimit(userId: number): Promise<any> {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users/remittances?userId=${userId}`, { withCredentials: true });
+      const response = await axios.get(`${API_BASE_URL}/users/remittances/user-limit`, { withCredentials: true });
       return response.data;
     } catch (error) {
       console.error('사용자 송금 한도 조회 실패:', error);
@@ -341,76 +208,34 @@ export const api = {
   },
 
   // 한도 변경 신청 API
-  async createRemittanceLimitRequest(userId: number, data: FormData): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/users/remittances/${userId}`, data, {
+  async createRemittanceLimitRequest(data: FormData): Promise<any> {
+    const response = await axios.post(`${API_BASE_URL}/users/remittances/limit-requests`, data, {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     });
     return response.data;
   },
 
-  async updateRemittanceLimitRequest(userId: number, requestId: number, data: FormData, isRerequest: boolean = false): Promise<any> {
+  async updateRemittanceLimitRequest(requestId: number, data: FormData, isRerequest: boolean = false): Promise<any> {
     // isRerequest 파라미터를 FormData에 추가
     data.append('isRerequest', isRerequest.toString());
     
-    const response = await axios.put(`${API_BASE_URL}/users/remittances/${userId}/${requestId}`, data, {
+    const response = await axios.put(`${API_BASE_URL}/users/remittances/${requestId}`, data, {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     });
     return response.data;
   },
 
-  async getUserRemittanceLimitRequests(userId: number): Promise<any[]> {
-    const response = await axios.get(`${API_BASE_URL}/users/remittances/${userId}`, { withCredentials: true });
+  async getUserRemittanceLimitRequests(): Promise<any[]> {
+    const response = await axios.get(`${API_BASE_URL}/users/remittances/limit-requests-info`, { withCredentials: true });
     return response.data;
   },
 
-  async getAdminRemittanceLimitRequests(params: {
-    userId?: number;
-    status?: string;
-    searchTerm?: string;
-    page?: number;
-    size?: number;
-    sortOrder?: string;
-  }): Promise<{list: any[], count: number}> {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/admin/remittance-limit-requests/search`, params, {
-        withCredentials: true
-      });
-      return response.data;
-    } catch (error) {
-      console.error('관리자 한도 변경 신청 조회 실패:', error);
-      throw error;
-    }
-  },
-
-  async processRemittanceLimitRequest(requestId: number, data: {
-    status: string;
-    adminId: number;
-    adminComment?: string;
-    userId?: number;
-    dailyLimit?: number;
-    monthlyLimit?: number;
-    singleLimit?: number;
-  }): Promise<void> {
-    try {
-      console.log('API 호출 데이터:', { requestId, data });
-      
-      await axios.put(`${API_BASE_URL}/admin/remittance-limit-requests/${requestId}/process`, data, {
-        withCredentials: true
-      });
-      
-      console.log('API 호출 성공');
-    } catch (error) {
-      console.error('한도 변경 신청 처리 실패:', error);
-      throw error;
-    }
-  },
-
   // 신청 취소
-  async cancelRemittanceLimitRequest(userId: number, requestId: number): Promise<void> {
+  async cancelRemittanceLimitRequest(requestId: number): Promise<void> {
     try {
-      await axios.delete(`${API_BASE_URL}/users/remittances/${userId}/${requestId}`, {
+      await axios.delete(`${API_BASE_URL}/users/remittances/${requestId}`, {
         withCredentials: true
       });
     } catch (error) {
@@ -420,10 +245,9 @@ export const api = {
   },
 
   // 송금 한도 체크
-  async checkRemittanceLimit(userId: number, amount: number): Promise<any> {
+  async checkRemittanceLimit( amount: number): Promise<any> {
     try {
       const response = await axios.post(`${API_BASE_URL}/users/remittances/check-limit`, {
-        userId,
         amount
       }, {
         withCredentials: true
@@ -447,18 +271,6 @@ export const api = {
       throw error;
     }
   },
-
-  async searchAdminNotices(searchRequest: any): Promise<any> {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/admin/notices/search`, searchRequest, {
-        withCredentials: true
-      });
-      return response.data;
-    } catch (error) {
-      console.error('관리자 공지사항 검색 실패:', error);
-      throw error;
-    }
-  },
   
   async incrementNoticeViewCount(noticeId: number): Promise<any> {
     try {
@@ -468,39 +280,6 @@ export const api = {
       return response.data;
     } catch (error) {
       console.error('공지사항 조회수 증가 실패:', error);
-      throw error;
-    }
-  },
-
-  async createNotice(noticeRequest: any): Promise<void> {
-    try {
-      await axios.post(`${API_BASE_URL}/admin/notices`, noticeRequest, {
-        withCredentials: true
-      });
-    } catch (error) {
-      console.error('공지사항 생성 실패:', error);
-      throw error;
-    }
-  },
-
-  async updateNotice(id: number, noticeRequest: any): Promise<void> {
-    try {
-      await axios.put(`${API_BASE_URL}/admin/notices/${id}`, noticeRequest, {
-        withCredentials: true
-      });
-    } catch (error) {
-      console.error('공지사항 수정 실패:', error);
-      throw error;
-    }
-  },
-
-  async deleteNotice(id: number): Promise<void> {
-    try {
-      await axios.delete(`${API_BASE_URL}/admin/notices/${id}`, {
-        withCredentials: true
-      });
-    } catch (error) {
-      console.error('공지사항 삭제 실패:', error);
       throw error;
     }
   },
@@ -646,73 +425,9 @@ export const api = {
     return response.data;
   },
 
-  // 관리자용 Q&A 검색
-  searchAdminQna: async (request: any) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/qna/search`, request, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // Q&A 답변 등록
-  answerQna: async (qnaId: number, answerData: { answerContent: string }) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/qna/${qnaId}/answer`, answerData, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // 한도 변경 신청 목록 조회 (관리자용)
-  getLimitRequests: async () => {
-    const response = await axios.get(`${API_BASE_URL}/admin/remittances/limit-requests`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // 공지사항 조회수 TOP5 조회
-  getTop5Notices: async () => {
-    const response = await axios.get(`${API_BASE_URL}/admin/notices/top5`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // Country API
-  searchCountries: async (request: any) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/countries/search`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // 관리자 페이지 국가 관리 탭 리스트 조회
-  getAdminAllCountries: async () => {
-    const response = await axios.get(`${API_BASE_URL}/admin/countries/all`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // getRemittanceCountries: async () => {
-  //   const response = await axios.get(`${API_BASE_URL}/countries/remittance`, {
-  //     withCredentials: true
-  //   });
-  //   return response.data;
-  // },
-
   // Notice API
   getNoticeById: async (id: number) => {
     const response = await axios.get(`${API_BASE_URL}/users/notices/${id}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  getAdminNoticeById: async (id: number) => {
-    const response = await axios.get(`${API_BASE_URL}/admin/notices/${id}`, {
       withCredentials: true
     });
     return response.data;
@@ -726,98 +441,4 @@ export const api = {
     return response.data;
   },
 
-  getAdminQnaById: async (id: number) => {
-    const response = await axios.get(`${API_BASE_URL}/admin/qna/${id}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  getCountryByCode: async (code: string) => {
-    const response = await axios.get(`${API_BASE_URL}/admin/countries/${code}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  createCountry: async (request: any) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/countries`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  updateCountry: async (code: string, request: any) => {
-    const response = await axios.put(`${API_BASE_URL}/admin/countries/${code}`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  deleteCountry: async (code: string) => {
-    const response = await axios.delete(`${API_BASE_URL}/admin/countries/${code}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // Bank API
-  searchBanks: async (request: any) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/banks/search`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  getBankById: async (id: number) => {
-    const response = await axios.get(`${API_BASE_URL}/admin/banks/${id}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  createBank: async (request: any) => {
-    const response = await axios.post(`${API_BASE_URL}/admin/banks`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  updateBank: async (id: number, request: any) => {
-    const response = await axios.put(`${API_BASE_URL}/admin/banks/${id}`, request, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  deleteBank: async (id: number) => {
-    const response = await axios.delete(`${API_BASE_URL}/admin/banks/${id}`, {
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  // Admin Authentication APIs
-  async adminLogin(loginData: { adminId: string; password: string }): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/admin/login`, loginData, {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    });
-    return response.data;
-  },
-
-  async getCurrentAdmin(): Promise<any> {
-    const response = await axios.get(`${API_BASE_URL}/admin/current`, { withCredentials: true });
-    return response.data;
-  },
-
-  async adminLogout(): Promise<any> {
-    const response = await axios.post(`${API_BASE_URL}/admin/logout`, {}, { withCredentials: true });
-    return response.data;
-  },
 }; 

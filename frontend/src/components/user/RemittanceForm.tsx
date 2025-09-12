@@ -7,7 +7,7 @@ import { remittanceCountriesAtom, getRemittanceCountries, exchangeRatesAtom, upd
 import { myBankAccountAtom, banksAtom, fetchBanksAtom } from '../../store/myBankAccountStore';
 import type { SenderBank } from '../../store/myBankAccountStore';
 import { userInfoAtom } from '../../store/userStore';
-import AccountModal from '../admin/AccountModal';
+import AccountModal from './AccountModal';
 import RemittanceLimitDisplay from './RemittanceLimitDisplay';
 
 export interface RemittanceFormData {
@@ -70,7 +70,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   const senderBanks = useAtomValue(banksAtom('KRW')) || [];
   const fetchSenderBanks = useSetAtom(fetchBanksAtom('KRW'));
   useEffect(() => {
-    if (!senderBanks || senderBanks.length === 0) {
+    if (userInfo?.id && (!senderBanks || senderBanks.length === 0)) {
       fetchSenderBanks();
     }
   }, [senderBanks, fetchSenderBanks]);
@@ -87,13 +87,6 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   const receiverBankOptions = receiverBanks.map((b: SenderBank) => ({ value: b.bankCode, label: b.name }));
   const currencyOptions = (remittanceCountries ?? []).map(c => ({ value: c.code, label: `${c.countryName} – ${c.codeName} (${c.code})` }));
 
-  // Helper to get a safe senderBank value
-  const getSafeSenderBankValue = () => {
-    if (form.senderBank && senderBankOptions.some(opt => opt.value === form.senderBank)) {
-      return form.senderBank;
-    }
-    return senderBankOptions.length > 0 ? senderBankOptions[0].value : '';
-  };
 
   // 통화 표시 이름 생성
   const getCurrencyDisplayName = (currencyCode: string) => {
@@ -133,22 +126,32 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   }, [senderBankOptions, myBankAccount, form.senderBank]);
 
   useEffect(() => {
-    if (!userInfo?.id) return;
-    api.getMyBankAccount(userInfo.id).then(data => {
-      if (data && data.bankCode && data.accountNumber) {
-        setForm(prev => ({ ...prev, senderBank: data.bankCode, senderAccount: data.accountNumber }));
-        setMyBankAccount(data);
-      } else {
-        setMyBankAccount(null);
-        setForm(prev => ({ ...prev, senderBank: '', senderAccount: '' }));
-      }
-    });
+    if(userInfo?.id){
+      api.getMyBankAccount().then(data => {
+        if (data && data.bankCode && data.accountNumber) {
+          setForm(prev => ({ ...prev, senderBank: data.bankCode, senderAccount: data.accountNumber }));
+          setMyBankAccount(data);
+        } else {
+          setMyBankAccount(null);
+          setForm(prev => ({ ...prev, senderBank: '', senderAccount: '' }));
+        }
+      });
+    }
+
   }, [userInfo, setMyBankAccount]);
 
   const handleAccountSave = async (bank: string, account: string) => {
-    if (!userInfo?.id) return;
     if (!bank || !account) {
-      Swal.fire({ icon: 'warning', title: '정보를 모두 입력해 주세요.', customClass: { popup: 'swal2-z-top', container: 'swal2-z-top' } });
+      Swal.fire({ 
+        icon: 'warning', 
+        title: '정보를 모두 입력해 주세요.', 
+        customClass: { 
+          popup: 'swal2-z-top', 
+          container: 'swal2-z-top',
+          backdrop: 'swal2-z-top'
+        },
+        zIndex: 99999
+      });
       return;
     }
     const isEdit = !!myBankAccount && myBankAccount.bankCode && myBankAccount.accountNumber;
@@ -157,14 +160,19 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       title: isEdit ? '내 은행/계좌 정보 수정' : '내 은행/계좌 정보 등록',
       text: isEdit ? '내 은행/계좌 정보를 수정하시겠습니까?' : '내 은행/계좌 정보를 등록하시겠습니까?',
       showCancelButton: true,
+      customClass: { 
+        popup: 'swal2-z-top', 
+        container: 'swal2-z-top',
+        backdrop: 'swal2-z-top'
+      },
+      zIndex: 99999,
       confirmButtonText: isEdit ? '수정' : '등록',
       cancelButtonText: '취소',
       confirmButtonColor: '#3b82f6',
       cancelButtonColor: '#d1d5db',
-      customClass: { popup: 'swal2-z-top', container: 'swal2-z-top' },
     });
     if (!result.isConfirmed) return;
-    await api.saveMyBankAccount({ userId: userInfo.id, bankCode: bank, accountNumber: account });
+    await api.saveMyBankAccount({ bankCode: bank, accountNumber: account });
     setForm(prev => ({ ...prev, senderBank: bank, senderAccount: account }));
     setMyBankAccount({ bankCode: bank, accountNumber: account });
     setShowAccountModal(false);
@@ -175,7 +183,12 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       width: 420,
       timer: 1300,
       showConfirmButton: false,
-      customClass: { popup: 'swal2-z-top', container: 'swal2-z-top' }
+      customClass: { 
+        popup: 'swal2-z-top', 
+        container: 'swal2-z-top',
+        backdrop: 'swal2-z-top'
+      },
+      zIndex: 99999
     });
   };
 
@@ -305,7 +318,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
 
     try {
       // 한도 체크
-      const limitCheck = await api.checkRemittanceLimit(userInfo?.id || 0, cleanAmount);
+      const limitCheck = await api.checkRemittanceLimit(cleanAmount);
       
       if (!limitCheck.success) {
         // 한도 초과 시 상세 메시지 표시
@@ -370,7 +383,6 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
 
       // 송금 API 호출
       const remittanceData = {
-        userId: userInfo?.id || 0,
         senderBank: form.senderBank,
         senderAccount: form.senderAccount,
         receiverBank: form.receiverBank,
@@ -583,7 +595,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   return (
     <>
       {/* 송금 한도 표시 */}
-      <RemittanceLimitDisplay refreshKey={refreshKey} user={userInfo} />
+      <RemittanceLimitDisplay refreshKey={refreshKey} />
       
       {/* 내 은행/계좌 등록/수정 버튼 */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: 8 }}>
@@ -610,7 +622,12 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
             await Swal.fire({
               icon: 'warning',
               title: '정보를 모두 입력해 주세요.',
-              customClass: { popup: 'swal2-z-top', container: 'swal2-z-top' },
+              customClass: { 
+                popup: 'swal2-z-top', 
+                container: 'swal2-z-top',
+                backdrop: 'swal2-z-top'
+              },
+              zIndex: 99999
             });
             return;
           }

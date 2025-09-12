@@ -1,81 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.RemittanceLimitRequestMapper">
-
-
-    <select id="selectRemittanceLimitRequests" resultType="RemittanceLimitRequestResponse">
-        SELECT 
-            rlr.id,
-            rlr.user_id,
-            rlr.daily_limit,
-            rlr.monthly_limit,
-            rlr.single_limit,
-            rlr.reason,
-            rlr.income_file_id,
-            rlr.bankbook_file_id,
-            rlr.business_file_id,
-            rlr.status,
-            rlr.admin_id,
-            rlr.admin_comment,
-            rlr.processed_at,
-            rlr.created_at,
-            rlr.updated_at,
-            u.name as user_name,
-            income_file.original_name as income_file_name,
-            income_file.file_size as income_file_size,
-            income_file.file_type as income_file_type,
-            bankbook_file.original_name as bankbook_file_name,
-            bankbook_file.file_size as bankbook_file_size,
-            bankbook_file.file_type as bankbook_file_type,
-            business_file.original_name as business_file_name,
-            business_file.file_size as business_file_size,
-            business_file.file_type as business_file_type
-        FROM remittance_limit_request rlr
-        LEFT JOIN user u ON rlr.user_id = u.id
-        LEFT JOIN file income_file ON rlr.income_file_id = income_file.id
-        LEFT JOIN file bankbook_file ON rlr.bankbook_file_id = bankbook_file.id
-        LEFT JOIN file business_file ON rlr.business_file_id = business_file.id
-        <where>
-            <if test="userId != null">
-                AND rlr.user_id = #{userId}
-            </if>
-            <if test="status != null and status != ''">
-                AND rlr.status = #{status}
-            </if>
-            <if test="searchTerm != null and searchTerm != ''">
-                AND u.name LIKE CONCAT('%', #{searchTerm}, '%')
-            </if>
-        </where>
-        ORDER BY 
-        <choose>
-            <when test="sortOrder == 'latest'">
-                rlr.created_at DESC
-            </when>
-            <otherwise>
-                rlr.created_at ASC
-            </otherwise>
-        </choose>
-        <if test="size > 0">
-            LIMIT #{size} OFFSET #{page}
-        </if>
-    </select>
-
-    <select id="countRemittanceLimitRequests" resultType="int">
-        SELECT COUNT(*)
-        FROM remittance_limit_request rlr
-        LEFT JOIN user u ON rlr.user_id = u.id
-        <where>
-            <if test="userId != null">
-                AND rlr.user_id = #{userId}
-            </if>
-            <if test="status != null and status != ''">
-                AND rlr.status = #{status}
-            </if>
-            <if test="searchTerm != null and searchTerm != ''">
-                AND u.name LIKE CONCAT('%', #{searchTerm}, '%')
-            </if>
-        </where>
-    </select>
+<mapper namespace="com.example.remittance.mapper.RemittanceLimitRequestMapper">
 
     <select id="selectRemittanceLimitRequestById" resultType="RemittanceLimitRequestResponse">
         SELECT 
@@ -178,30 +103,6 @@
             updated_at = NOW()
         WHERE id = #{id}
     </update>
-
-    <insert id="insertUserRemittanceLimit">
-        INSERT INTO user_remittance_limit (
-            user_id, 
-            daily_limit, 
-            monthly_limit, 
-            single_limit,
-            request_id,
-            created_at
-            )
-        VALUES(
-            #{userId},
-            #{dailyLimit},
-            #{monthlyLimit},
-            #{singleLimit},
-            #{requestId},
-            NOW()
-            )
-    </insert>
-
-    <delete id="deleteUserRemittanceLimit">
-        DELETE FROM user_remittance_limit
-        WHERE user_id = #{userId}
-    </delete>
 
     <select id="hasUserRemittanceLimit" resultType="int">
         SELECT COUNT(*)

@@ -97,11 +97,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
   }, [open, userInfo?.id]);
 
   const fetchRequests = async () => {
-    if (!userInfo?.id) return;
-    
+   
     setLoading(true);
     try {
-      const response = await api.getUserRemittanceLimitRequests(userInfo.id);
+      const response = await api.getUserRemittanceLimitRequests();
       setRequests(response);
     } catch (error) {
       console.error('한도 변경 신청 조회 실패:', error);
@@ -128,7 +127,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
     if (!result.isConfirmed) return;
 
     try {
-      await api.cancelRemittanceLimitRequest(userInfo.id, requestId);
+      await api.cancelRemittanceLimitRequest(requestId);
       
       await Swal.fire({
         icon: 'success',

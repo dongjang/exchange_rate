@@ -1,37 +1,13 @@
-import React, { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAtom } from 'jotai';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaHome, FaArrowLeft } from 'react-icons/fa';
-import { adminInfoAtom, adminAuthAtom } from '../../store/adminStore';
-import { api } from '../../services/api';
 
 const NotFound = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [adminInfo] = useAtom(adminInfoAtom);
-  const [adminAuth] = useAtom(adminAuthAtom);
 
   const handleHomeClick = () => {
-   
-    // App.tsx와 동일한 방식으로 admin 페이지 판별
-    const validAdminPaths = ['/admin', '/admin/remittance', '/admin/countries-banks', '/admin/users', '/admin/notices', '/admin/qna'];
-    const isAdminPage = validAdminPaths.includes(location.pathname) || location.pathname.startsWith('/admin');
-
-    // admin 페이지인 경우 관리자 로그인 상태 확인
-    if (isAdminPage) {
-
-      if (adminInfo) {
-
-        // 관리자 로그인된 상태면 /admin으로 이동
-        navigate('/admin');
-      } else {
-        // 관리자 로그인 안된 상태면 사용자 홈으로 이동
-        navigate('/');
-      }
-    } else {
-      // admin 페이지가 아니면 사용자 홈으로 이동
-      navigate('/');
-    }
+    // 사용자 홈으로 이동
+    navigate('/');
   };
 
   return (

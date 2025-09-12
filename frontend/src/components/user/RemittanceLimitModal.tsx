@@ -463,13 +463,10 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
       }
 
       // API 호출
-      if (!userInfo?.id) {
-        throw new Error('사용자 정보를 찾을 수 없습니다.');
-      }
 
       if (isRerequest && currentLimit && currentLimit.id) {
         // 재신청 모드 - 기존 요청 UPDATE
-        await api.updateRemittanceLimitRequest(userInfo.id, currentLimit.id, formDataToSend, true);
+        await api.updateRemittanceLimitRequest(currentLimit.id, formDataToSend, true);
         
         await Swal.fire({
           icon: 'success',
@@ -479,7 +476,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
         });
       } else if (isEdit && editRequestId) {
         // 수정 모드
-        await api.updateRemittanceLimitRequest(userInfo.id, editRequestId, formDataToSend);
+        await api.updateRemittanceLimitRequest(editRequestId, formDataToSend);
         
         await Swal.fire({
           icon: 'success',
@@ -489,7 +486,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
         });
       } else {
         // 신규 신청 모드
-        await api.createRemittanceLimitRequest(userInfo.id, formDataToSend);
+        await api.createRemittanceLimitRequest(formDataToSend);
         
         await Swal.fire({
           icon: 'success',

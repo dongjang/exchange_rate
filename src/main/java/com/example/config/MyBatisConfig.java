@@ -10,7 +10,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan(basePackages = "com.example.mapper")
+@MapperScan(basePackages = {"com.example.remittance.mapper", "com.example.support.mapper"})
 public class MyBatisConfig {
 
     @Bean
@@ -24,7 +24,7 @@ public class MyBatisConfig {
         );
         
         // Type Aliases 패키지 설정
-        sessionFactory.setTypeAliasesPackage("com.example.dto, com.example.domain");
+        sessionFactory.setTypeAliasesPackage("com.example.remittance.dto,com.example.remittance.domain,com.example.support.dto,com.example.support.domain");
         
         // MyBatis 설정
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
