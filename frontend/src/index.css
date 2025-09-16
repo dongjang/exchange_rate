@@ -30,3 +30,7 @@ body {
 .swal2-popup.swal2-z-top {
   z-index: 99999 !important;
 }
+
+.swal2-title {
+  font-size: 1.5em;
+}

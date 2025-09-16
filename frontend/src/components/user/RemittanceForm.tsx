@@ -154,6 +154,21 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       });
       return;
     }
+
+    if (account.length < 5) {
+      Swal.fire({ 
+        icon: 'warning', 
+        title: '계좌번호를 5자리 이상 입력해 주세요', 
+        customClass: { 
+          popup: 'swal2-z-top', 
+          container: 'swal2-z-top',
+          backdrop: 'swal2-z-top'
+        },
+        zIndex: 99999
+      });
+      return;
+    }
+
     const isEdit = !!myBankAccount && myBankAccount.bankCode && myBankAccount.accountNumber;
     const result = await Swal.fire({
       icon: 'question',
@@ -244,6 +259,10 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       await Swal.fire({ icon: 'warning', title: '내 계좌번호를 입력해 주세요' });
       return;
     }
+    if (form.senderAccount.length < 5) {
+      await Swal.fire({ icon: 'warning', title: '내 계좌번호를 5자리 이상 입력해 주세요' });
+      return;
+    }
 
     if (!form.currency) {
       await Swal.fire({ icon: 'warning', title: '수취 통화를 선택해 주세요' });
@@ -257,6 +276,12 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       await Swal.fire({ icon: 'warning', title: '받는 계좌번호를 입력해 주세요' });
       return;
     }
+
+    if (form.receiverAccount.length < 5) {
+      await Swal.fire({ icon: 'warning', title: '받는 계좌번호를 5자리 이상 입력해 주세요' });
+      return;
+    }
+
     if (!form.receiverName) {
       await Swal.fire({ icon: 'warning', title: '받는 사람을을 입력해 주세요' });
       return;
@@ -526,8 +551,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
 
   const modernBtnStyle = (isHover: boolean, compact = false): React.CSSProperties => ({
     background: isHover
-      ? 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%)'
-      : 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
+      ? 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)'
+      : 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
     color: '#fff',
     border: 'none',
     borderRadius: compact ? 10 : 18,
@@ -543,42 +568,6 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
     transform: isHover ? 'scale(1.045)' : 'scale(1)',
     outline: 'none',
   });
-
-  const accountBtnStyle: React.CSSProperties = {
-    background: isAccountBtnHover
-      ? 'linear-gradient(90deg, #60a5fa 60%, #3b82f6 100%)'
-      : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 9,
-    padding: '0.6rem 1.2rem',
-    fontWeight: 700,
-    fontSize: '1.04rem',
-    cursor: 'pointer',
-    boxShadow: isAccountBtnHover
-      ? '0 2px 8px 0 rgba(60, 130, 246, 0.18)'
-      : '0 1px 4px rgba(30,41,59,0.07)',
-    transition: 'background 0.18s, box-shadow 0.18s',
-    marginLeft: 8,
-  };
-
-  const simBtnStyle: React.CSSProperties = {
-    background: isSimBtnHover
-      ? 'linear-gradient(90deg, #60a5fa 60%, #3b82f6 100%)'
-      : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 9,
-    padding: '0.6rem 1.2rem',
-    fontWeight: 700,
-    fontSize: '1.04rem',
-    cursor: 'pointer',
-    boxShadow: isSimBtnHover
-      ? '0 2px 8px 0 rgba(60, 130, 246, 0.18)'
-      : '0 1px 4px rgba(30,41,59,0.07)',
-    transition: 'background 0.18s, box-shadow 0.18s',
-    marginLeft: 8,
-  };
 
   // Patch senderBankOptions to include myBankAccount.bankCode if not present
   const patchedSenderBankOptions = React.useMemo(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { api } from '../../services/api';
 import RemittanceList from './RemittanceList';
@@ -6,7 +6,6 @@ import RemittanceHistoryFilter from './RemittanceHistoryFilter';
 import RemittancePaging from './RemittancePaging';
 import RemittanceDetailModal from './RemittanceDetailModal';
 import { userInfoAtom } from '../../store/userStore';
-import { authAtom } from '../../store/authStore';
 import CommonPageHeader from './CommonPageHeader';
 
 interface RemittanceHistory {
@@ -25,12 +24,14 @@ interface RemittanceHistory {
   status: string;
   createdAt: string;
   updatedAt: string;
+  senderBankName?: string;
+  receiverBankName?: string;
 }
 
 function RemittanceHistoryPage() {
   const [userInfo] = useAtom(userInfoAtom);
   const [remittances, setRemittances] = useState<RemittanceHistory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

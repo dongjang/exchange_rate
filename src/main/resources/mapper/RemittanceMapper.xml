@@ -50,4 +50,32 @@
         WHERE def.is_active = true
     </select>
 
+    <select id="getRemittanceDetailWithBankInfo" resultType="RemittanceDetailResponse">
+        <!-- 송금 상세 정보 조회 (은행 정보 포함) -->
+        SELECT 
+            r.id,
+            r.user_id,
+            r.sender_bank,
+            r.sender_account,
+            r.receiver_bank,
+            r.receiver_account,
+            r.receiver_name,
+            r.receiver_country,
+            r.amount,
+            r.currency,
+            r.status,
+            r.exchange_rate,
+            r.converted_amount,
+            r.failure_reason,
+            r.created_at,
+            r.updated_at,
+            sb.name AS sender_bank_name,
+            rb.name AS receiver_bank_name
+        FROM remittance r
+        LEFT JOIN bank sb ON sb.bank_code = r.sender_bank
+        LEFT JOIN bank rb ON rb.bank_code = r.receiver_bank
+        WHERE r.id = #{remittanceId}
+        AND r.user_id = #{userId}
+    </select>
+
 </mapper> 

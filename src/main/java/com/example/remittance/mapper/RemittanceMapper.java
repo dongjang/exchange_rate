@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.remittance.dto.RemittanceDetailResponse;
 import com.example.remittance.dto.UserLimitsResponse;
 
 @Mapper
@@ -25,4 +26,9 @@ public interface RemittanceMapper {
      * 사용자별 한도 조회
      */
     UserLimitsResponse getUserLimits(@Param("userId") Long userId);
+    
+    /**
+     * 송금 상세 정보 조회 (은행 정보 포함)
+     */
+    RemittanceDetailResponse getRemittanceDetailWithBankInfo(@Param("remittanceId") Long remittanceId, @Param("userId") Long userId);
 } 

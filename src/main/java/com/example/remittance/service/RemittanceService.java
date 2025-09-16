@@ -20,6 +20,7 @@ import com.example.common.service.FileService;
 import com.example.context.SessionContext;
 import com.example.remittance.domain.Remittance;
 import com.example.remittance.domain.RemittanceLimitRequest;
+import com.example.remittance.dto.RemittanceDetailResponse;
 import com.example.remittance.dto.RemittanceHistoryDto;
 import com.example.remittance.dto.RemittanceLimitCheckResponse;
 import com.example.remittance.dto.RemittanceLimitRequestResponse;
@@ -381,6 +382,12 @@ public class RemittanceService {
     // 송금 정보 조회
     public Remittance findById(Long id) {
         return remittanceRepository.findById(id).orElse(null);
+    }
+    
+    // 송금 상세 정보 조회 (은행 정보 포함)
+    public RemittanceDetailResponse getRemittanceDetailWithBankInfo(Long remittanceId) {
+        Long userId = SessionContext.getCurrentUserId();
+        return remittanceMapper.getRemittanceDetailWithBankInfo(remittanceId, userId);
     }
 
     // 동적 검색 조건으로 송금 이력 조회 (페이징 포함) - 기존 사용자용

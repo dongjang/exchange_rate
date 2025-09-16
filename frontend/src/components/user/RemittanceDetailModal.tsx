@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAtom } from 'jotai';
-import { remittanceCountriesAtom, countryAtom } from '../../store/countryStore';
+import { remittanceCountriesAtom } from '../../store/countryStore';
 
 interface RemittanceDetailModalProps {
   isOpen: boolean;
@@ -22,6 +22,8 @@ interface RemittanceDetailModalProps {
     failureReason?: string;
     createdAt: string;
     updatedAt: string;
+    senderBankName?: string;
+    receiverBankName?: string;
   } | null;
 }
 
@@ -138,7 +140,9 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>은행</span>
-                  <span style={{ color: '#1e293b', fontWeight: 600 }}>{remittance.receiverBank}</span>
+                  <span style={{ color: '#1e293b', fontWeight: 600 }}>
+                    {remittance.receiverBankName || remittance.receiverBank}
+                  </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>계좌번호</span>
@@ -167,7 +171,9 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
               <div style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>은행</span>
-                  <span style={{ color: '#1e293b', fontWeight: 600 }}>{remittance.senderBank}</span>
+                  <span style={{ color: '#1e293b', fontWeight: 600 }}>
+                    {remittance.senderBankName || remittance.senderBank}
+                  </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>계좌번호</span>

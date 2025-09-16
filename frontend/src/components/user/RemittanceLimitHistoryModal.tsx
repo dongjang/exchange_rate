@@ -115,7 +115,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
     const result = await Swal.fire({
       icon: 'warning',
       title: '신청 취소',
-      text: '정말로 이 한도 변경 신청을 취소하시겠습니까? 취소 후에는 복구할 수 없습니다.',
+      html: '정말로 이 한도 변경 신청을 취소하시겠습니까?<br> 취소 후에는 복구할 수 없습니다.',
       showCancelButton: true,
       confirmButtonText: '취소',
       cancelButtonText: '돌아가기',

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.remittance.domain.Remittance;
 import com.example.remittance.domain.RemittanceLimitRequest;
+import com.example.remittance.dto.RemittanceDetailResponse;
 import com.example.remittance.dto.RemittanceLimitCheckResponse;
 import com.example.remittance.dto.RemittanceLimitRequestWithFilesResponse;
 import com.example.remittance.dto.UserRemittanceHistoryResponse;
@@ -61,16 +62,17 @@ public class RemittanceController {
         }
     }
 
-    // 송금 상세 조회
+    // 송금 상세 조회 (은행 정보 포함)
     @GetMapping("/detail/{remittanceId}")
-    public ResponseEntity<Remittance> getRemittanceDetail(@PathVariable Long remittanceId) {
+    public ResponseEntity<RemittanceDetailResponse> getRemittanceDetail(@PathVariable Long remittanceId) {
         try {
-            Remittance remittance = userRemittanceService.findById(remittanceId);
-            if (remittance == null) {
+            RemittanceDetailResponse remittanceDetail = userRemittanceService.getRemittanceDetailWithBankInfo(remittanceId);
+            if (remittanceDetail == null) {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(remittance);
+            return ResponseEntity.ok(remittanceDetail);
         } catch (Exception e) {
+            log.error("송금 상세 조회 실패", e);
             return ResponseEntity.internalServerError().build();
         }
     }
