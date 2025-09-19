@@ -130,9 +130,9 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       api.getMyBankAccount().then(data => {
         if (data && data.bankCode && data.accountNumber) {
           setForm(prev => ({ ...prev, senderBank: data.bankCode, senderAccount: data.accountNumber }));
-          setMyBankAccount(data);
+          (setMyBankAccount as any)(data);
         } else {
-          setMyBankAccount(null);
+          (setMyBankAccount as any)(null);
           setForm(prev => ({ ...prev, senderBank: '', senderAccount: '' }));
         }
       });
@@ -148,9 +148,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         customClass: { 
           popup: 'swal2-z-top', 
           container: 'swal2-z-top'
-        } as any,
-        zIndex: 99999
-      });
+        } as any
+      } as any);
       return;
     }
 
@@ -161,9 +160,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         customClass: { 
           popup: 'swal2-z-top', 
           container: 'swal2-z-top'
-        } as any,
-        zIndex: 99999
-      });
+        } as any
+      } as any);
       return;
     }
 
@@ -178,16 +176,15 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         container: 'swal2-z-top',
         backdrop: 'swal2-z-top'
       },
-      zIndex: 99999,
       confirmButtonText: isEdit ? '수정' : '등록',
       cancelButtonText: '취소',
       confirmButtonColor: '#3b82f6',
-      cancelButtonColor: '#d1d5db',
-    });
+      cancelButtonColor: '#d1d5db'
+    } as any);
     if (!result.isConfirmed) return;
     await api.saveMyBankAccount({ bankCode: bank, accountNumber: account });
     setForm(prev => ({ ...prev, senderBank: bank, senderAccount: account }));
-    setMyBankAccount({ bankCode: bank, accountNumber: account });
+    (setMyBankAccount as any)({ bankCode: bank, accountNumber: account });
     setShowAccountModal(false);
     Swal.fire({
       icon: 'success',
@@ -200,9 +197,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         popup: 'swal2-z-top', 
         container: 'swal2-z-top',
         backdrop: 'swal2-z-top'
-      },
-      zIndex: 99999
-    });
+      }
+    } as any);
   };
 
   const formatNumberWithCommas = (value: string | number) => {
@@ -612,9 +608,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
                 popup: 'swal2-z-top', 
                 container: 'swal2-z-top',
                 backdrop: 'swal2-z-top'
-              },
-              zIndex: 99999
-            });
+              }
+            } as any);
             return;
           }
           await handleAccountSave(bank, account);

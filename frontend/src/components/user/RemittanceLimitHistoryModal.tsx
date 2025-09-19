@@ -682,6 +682,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
             monthlyLimit: selectedRequest.monthlyLimit,
             singleLimit: selectedRequest.singleLimit,
             status: selectedRequest.status,
+            limitType: 'DEFAULT_LIMIT' as const,
             reason: selectedRequest.reason,
             incomeFile: selectedRequest.incomeFile,
             bankbookFile: selectedRequest.bankbookFile,

@@ -49,7 +49,7 @@ function AppContent() {
           pictureUrl: successResult.user.pictureUrl,
           status: successResult.user.status || 'ACTIVE' // status가 없으면 기본값 설정
         };
-        setUserInfo(user as any);
+        (setUserInfo as any)(user);
         return true;
       } else {
         setAuthState({ isAuthenticated: false, isLoading: false });

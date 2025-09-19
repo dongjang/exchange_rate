@@ -1030,21 +1030,21 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
                 fontFamily: 'inherit'
               }}
               onFocus={(e) => {
-                (e.target as HTMLInputElement).style.borderColor = '#3b82f6';
-                (e.target as HTMLInputElement).style.backgroundColor = 'white';
-                (e.target as HTMLInputElement).style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
+                (e.target as any).style.borderColor = '#3b82f6';
+                (e.target as any).style.backgroundColor = 'white';
+                (e.target as any).style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1)';
               }}
               onBlur={(e) => {
-                (e.target as HTMLInputElement).style.borderColor = '#e5e7eb';
-                (e.target as HTMLInputElement).style.backgroundColor = '#f9fafb';
-                (e.target as HTMLInputElement).style.boxShadow = 'none';
+                (e.target as any).style.borderColor = '#e5e7eb';
+                (e.target as any).style.backgroundColor = '#f9fafb';
+                (e.target as any).style.boxShadow = 'none';
               }}
               onMouseEnter={(e) => {
-                (e.target as HTMLInputElement).style.backgroundColor = '#f3f4f6';
+                (e.target as any).style.backgroundColor = '#f3f4f6';
               }}
               onMouseLeave={(e) => {
                 if (document.activeElement !== e.target) {
-                  (e.target as HTMLInputElement).style.backgroundColor = '#f9fafb';
+                  (e.target as any).style.backgroundColor = '#f9fafb';
                 }
               }}
               required

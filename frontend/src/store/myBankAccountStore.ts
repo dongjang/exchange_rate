@@ -14,7 +14,7 @@ export type SenderBank = {
   name: string;
 };
 
-export const banksAtom = atomFamily<string, SenderBank[] | null>(
+export const banksAtom = atomFamily<string, any>(
   (currencyCode) => atom<SenderBank[] | null>(null)
 );
 
