@@ -27,23 +27,38 @@ public class SecurityConfig {
     private final Environment env;
 
     @Bean
-    public SecurityFilterChain userFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+    @Order(1)
+    public SecurityFilterChain userApiFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
-            .securityMatcher("/api/**", "/oauth2/**", "/login/**")
+            .securityMatcher("/api/users/**", "/api/files/**")
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/users/auth/**").permitAll()
                 .requestMatchers("/api/users/notices/**").authenticated()
-                .requestMatchers("/api/users/exchange-rates/**").authenticated()
-                .requestMatchers("/api/users/remittance/**").authenticated()
+                .requestMatchers("/api/users/exchange/**").authenticated()
+                .requestMatchers("/api/users/remittances/**").authenticated()
                 .requestMatchers("/api/users/qna/**").authenticated()
+                .requestMatchers("/api/users/banks/**").authenticated()
+                .requestMatchers("/api/users/countries/**").authenticated()
                 .requestMatchers("/api/users/**").authenticated()
                 .requestMatchers("/api/files/*/download").authenticated()
                 .requestMatchers("/api/files/*/info").authenticated()
                 .requestMatchers("/api/files/**").authenticated()
-                .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/health/**").permitAll()
+                .anyRequest().denyAll()
+            );
+        
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain oauthFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+        http
+            .securityMatcher("/oauth2/**", "/login/**")
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
                 .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -65,6 +80,37 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Bean
+    @Order(3)
+    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/public/**", "/health/**", "/actuator/**")
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/health/**").permitAll()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .anyRequest().denyAll()
+            );
+        
+        return http.build();
+    }
+
+    @Bean
+    @Order(4)
+    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/**")
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/", "/remittance", "/countries-banks", "/notices", "/qna", "/auth/**").permitAll()
+                .anyRequest().denyAll()
+            );
+        
+        return http.build();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -79,8 +125,9 @@ public class SecurityConfig {
         String[] allowedOrigins = getCorsAllowedOrigins();
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
         
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         
@@ -93,31 +140,38 @@ public class SecurityConfig {
      * 환경별 프론트엔드 URL 반환
      */
     private String getFrontendUrl() {
-        String profile = env.getActiveProfiles().length > 0 ? env.getActiveProfiles()[0] : "dev";
+        String corsOrigins = env.getProperty("cors.allowed.origins");
         
-        switch (profile) {
-            case "prod":
-                return ""; // 운영 도메인
-            case "staging":
-                return ""; // 스테이징 도메인
-            default:
-                return "http://localhost:5173"; // 개발 환경
+        if (corsOrigins != null && !corsOrigins.isEmpty()) {
+            // CORS origins에서 첫 번째 Vercel 도메인 찾기
+            String[] origins = corsOrigins.split(",");
+            for (String origin : origins) {
+                if (origin.contains("vercel.app")) {
+                    return origin.trim();
+                }
+            }
         }
+        
+        // 기본값 (개발 환경)
+        return "http://localhost:5173";
     }
 
     /**
      * 환경별 CORS 허용 origin 설정
      */
     private String[] getCorsAllowedOrigins() {
-        String profile = env.getActiveProfiles().length > 0 ? env.getActiveProfiles()[0] : "dev";
+        String corsOrigins = env.getProperty("cors.allowed.origins");
         
-        switch (profile) {
-            case "prod":
-                return new String[]{""};
-            case "staging":
-                return new String[]{""};
-            default:
-                return new String[]{"http://localhost:5173"};
+        if (corsOrigins != null && !corsOrigins.isEmpty()) {
+            // 환경 변수에서 설정된 경우 (쉼표로 구분된 값들을 배열로 변환)
+            return corsOrigins.split(",");
         }
+        
+        // 환경 변수가 없는 경우 기본값 (개발 환경)
+        return new String[]{
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173"
+        };
     }
-} 
+}

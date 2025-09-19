@@ -10,6 +10,7 @@ import com.example.common.domain.Bank;
 import com.example.common.dto.BanksInfoResponse;
 
 
+
 public interface BankRepository extends JpaRepository<Bank, Long> {
     @Query("SELECT new com.example.common.dto.BanksInfoResponse(b.bankCode, b.name) FROM Bank b WHERE b.currencyCode = :currencyCode")
     List<BanksInfoResponse> findBanksByCurrencyCode(@Param("currencyCode") String currencyCode);

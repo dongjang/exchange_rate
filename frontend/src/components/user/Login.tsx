@@ -10,8 +10,34 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
+    // API 베이스 URL에서 포트와 프로토콜 추출
+    const getOAuthBaseUrl = () => {
+      // 환경변수에서 API URL 가져오기
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      
+      if (apiUrl) {
+        // API URL이 있으면 해당 URL 사용
+        return apiUrl.replace('/api', '');
+      }
+      
+      // Vercel 배포 환경인지 확인
+      if (window.location.hostname.includes('vercel.app')) {
+        // 배포 환경에서는 상대 경로 사용 (같은 도메인)
+        return window.location.origin;
+      }
+      
+      // 로컬 개발 환경
+      return 'http://localhost:8081';
+    };
+    
+    const oauthBaseUrl = getOAuthBaseUrl();
+    const googleAuthUrl = `${oauthBaseUrl}/oauth2/authorization/google`;
+    
+    console.log('OAuth Base URL:', oauthBaseUrl);
+    console.log('Google Auth URL:', googleAuthUrl);
+    
     // 구글 로그인 페이지로 리디렉션
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = googleAuthUrl;
   };
 
   const handleLogout = async () => {
