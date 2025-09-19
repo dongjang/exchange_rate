@@ -32,7 +32,7 @@ interface RemittanceLimit {
     fileSize: number;
     fileType: string;
   };
-  limitType: 'DEFAULT_LIMIT' | 'UPPER_LIMIT'; // 한도 타입
+  limitType?: 'DEFAULT_LIMIT' | 'UPPER_LIMIT' | 'USER_LIMIT'; // 한도 타입
 }
 
 interface RemittanceLimitModalProps {
