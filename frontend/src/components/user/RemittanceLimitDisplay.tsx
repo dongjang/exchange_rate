@@ -11,7 +11,7 @@ interface RemittanceLimit {
   dailyLimit: number;
   monthlyLimit: number;
   singleLimit: number;
-  limitType: 'DEFAULT_LIMIT' | 'UPPER_LIMIT';
+  limitType: 'DEFAULT_LIMIT' | 'UPPER_LIMIT' | 'USER_LIMIT';
   status?: 'APPROVED' | 'PENDING' | 'REJECTED';
   // 추가된 필드들
   originalDailyLimit?: number;

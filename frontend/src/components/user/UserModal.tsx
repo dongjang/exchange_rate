@@ -58,7 +58,7 @@ function UserModal({ isOpen, onClose }: UserModalProps) {
         // API 호출이 성공하면 formData로 users 상태 업데이트
         const updatedUser = { ...selectedUser, ...formData };
         // Header의 사용자 정보도 함께 업데이트
-        setUserInfo(updatedUser);
+        (setUserInfo as any)(updatedUser);
         handleClose();
         await Swal.fire({
           icon: 'success',
@@ -81,7 +81,7 @@ function UserModal({ isOpen, onClose }: UserModalProps) {
   };
 
   const handleClose = () => {
-    setSelectedUser(null);
+    (setSelectedUser as any)(null);
     setFormData({ email: '', name: '', pictureUrl: '' });
     setError(null);
     onClose();
