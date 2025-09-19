@@ -2,31 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.support.mapper.QnaMapper">
 
-    <sql id="QnaSelectFields">
-        q.id,
-        q.title,
-        q.content,
-        q.status,
-        q.file_id as fileId,
-        f.original_name as fileName,
-        q.created_at as createdAt,
-        q.updated_at as updatedAt,
-        q.answered_at as answeredAt,
-        q.answer_content as answerContent,
-        q.answer_user_id as answerUserId,
-        au.name as answerUserName,
-        u.name as userName,
-        f.file_size as fileSize
-    </sql>
-
-    <sql id="QnaFromClause">
+    <select id="selectQnaList" resultType="QnaResponse">
+        SELECT
+            q.id,
+            q.title,
+            q.content,
+            q.status,
+            q.file_id as fileId,
+            f.original_name as fileName,
+            q.created_at as createdAt,
+            q.updated_at as updatedAt,
+            q.answered_at as answeredAt,
+            q.answer_content as answerContent,
+            q.answer_user_id as answerUserId,
+            au.name as answerUserName,
+            u.name as userName,
+            f.file_size as fileSize
         FROM qna q
         LEFT JOIN file f ON q.file_id = f.id
         LEFT JOIN user au ON q.answer_user_id = au.id
         LEFT JOIN user u ON q.user_id = u.id
-    </sql>
-
-    <sql id="QnaWhereClause">
         <where>
             <if test="userId != null">
                 AND q.user_id = #{userId}
@@ -44,13 +39,6 @@
                 AND q.status != 'CANCELED'
             </if>
         </where>
-    </sql>
-
-    <select id="selectQnaList" resultType="QnaResponse">
-        SELECT
-        <include refid="QnaSelectFields"/>
-        <include refid="QnaFromClause"/>
-        <include refid="QnaWhereClause"/>
         <choose>
             <when test="sortOrder == 'oldest'">
                 ORDER BY q.created_at ASC
@@ -64,8 +52,27 @@
 
     <select id="selectQnaCount" resultType="int">
         SELECT COUNT(*)
-        <include refid="QnaFromClause"/>
-        <include refid="QnaWhereClause"/>
+        FROM qna q
+        LEFT JOIN file f ON q.file_id = f.id
+        LEFT JOIN user au ON q.answer_user_id = au.id
+        LEFT JOIN user u ON q.user_id = u.id
+        <where>
+            <if test="userId != null">
+                AND q.user_id = #{userId}
+            </if>
+            <if test="title != null and title != ''">
+                AND q.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="content != null and content != ''">
+                AND q.content LIKE CONCAT('%', #{content}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND q.status = #{status}
+            </if>
+            <if test="excludeCanceled != null and excludeCanceled == true">
+                AND q.status != 'CANCELED'
+            </if>
+        </where>
     </select>
 
     <update id="updateQnaStatus">

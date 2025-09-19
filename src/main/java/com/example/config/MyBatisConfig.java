@@ -24,7 +24,7 @@ public class MyBatisConfig {
         );
         
         // Type Aliases 패키지 설정
-        sessionFactory.setTypeAliasesPackage("com.example.remittance.dto,com.example.remittance.domain,com.example.support.dto,com.example.support.domain");
+        sessionFactory.setTypeAliasesPackage("com.example.remittance.dto,com.example.remittance.domain,com.example.support.dto,com.example.support.domain,com.example.domain");
         
         // MyBatis 설정
         org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();

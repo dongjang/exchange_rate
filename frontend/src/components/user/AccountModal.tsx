@@ -64,9 +64,9 @@ function AccountModal({ open, initialBank, initialAccount, onSave, isEdit, onClo
         onMouseDown={e => e.stopPropagation()}
       >
         <button onClick={onClose} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: '1.5rem', color: '#888', cursor: 'pointer' }} aria-label="닫기">×</button>
-        <h3 style={{ fontSize: '1.18rem', fontWeight: 700, marginBottom: '1.2rem', color: '#2563eb' }}>내 은행/계좌 {isEdit ? '수정' : '등록'}</h3>
+        <h3 style={{ fontSize: '1.18rem', fontWeight: 700, marginBottom: '1.2rem', background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>내 은행/계좌 {isEdit ? '수정' : '등록'}</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-          <label style={{ fontWeight: 600, color: '#2563eb' }}>은행</label>
+          <label style={{ fontWeight: 600, background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>은행</label>
           <select
             value={bank}
             onChange={e => {
@@ -85,7 +85,7 @@ function AccountModal({ open, initialBank, initialAccount, onSave, isEdit, onClo
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          <label style={{ fontWeight: 600, color: '#2563eb' }}>계좌번호</label>
+          <label style={{ fontWeight: 600, background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>계좌번호</label>
           <input
             type="text"
             value={account}
@@ -111,7 +111,7 @@ function AccountModal({ open, initialBank, initialAccount, onSave, isEdit, onClo
               onClick={() => onSave(bank, account)} 
               style={{ 
                 flex: 1,
-                background: '#2563eb', 
+                background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)', 
                 color: '#fff', 
                 border: 'none', 
                 borderRadius: 8, 
@@ -123,12 +123,12 @@ function AccountModal({ open, initialBank, initialAccount, onSave, isEdit, onClo
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#1d4ed8';
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgb(88, 110, 214) 0%, rgb(102, 63, 142) 100%)';
                 e.currentTarget.style.transform = 'translateY(-1px)';
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(30,41,59,0.15)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#2563eb';
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)';
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 1px 4px rgba(30,41,59,0.07)';
               }}

@@ -27,14 +27,12 @@ const Login = () => {
       }
       
       // 로컬 개발 환경
-      return 'http://localhost:8081';
+      return 'http://localhost:8080';
     };
     
     const oauthBaseUrl = getOAuthBaseUrl();
     const googleAuthUrl = `${oauthBaseUrl}/oauth2/authorization/google`;
     
-    console.log('OAuth Base URL:', oauthBaseUrl);
-    console.log('Google Auth URL:', googleAuthUrl);
     
     // 구글 로그인 페이지로 리디렉션
     window.location.href = googleAuthUrl;

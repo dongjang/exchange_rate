@@ -423,7 +423,6 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
 
       const result = await api.createRemittance(remittanceData);
       
-      console.log(result);
       await Swal.fire({
         icon: result.success ? 'success' : 'error',
         title: result.success ?  '송금 신청 완료' : '송금 신청 실패',

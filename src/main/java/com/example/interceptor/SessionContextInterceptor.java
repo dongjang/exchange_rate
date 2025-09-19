@@ -30,19 +30,25 @@ public class SessionContextInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         
         try {
-            // 세션 정보 조회
+            // 로컬 개발 환경에서는 Redis 없이도 동작하도록 수정
             String sessionId = extractSessionId(request);
             if (sessionId != null) {
-                Object sessionData = getSessionData(sessionId);
-                
-                if (sessionData != null) {
-                    // SessionContext 설정
-                    SessionContext context = new SessionContext();
-                    setSessionContextFromData(context, sessionData);
-                    SessionContext.setContext(context);
+                try {
+                    Object sessionData = getSessionData(sessionId);
                     
-                    log.info("SessionContext 설정 완료 - URI: {}, UserId: {}", 
-                            requestURI, context.getUserId());
+                    if (sessionData != null) {
+                        // SessionContext 설정
+                        SessionContext context = new SessionContext();
+                        setSessionContextFromData(context, sessionData);
+                        SessionContext.setContext(context);
+                        
+                        log.info("SessionContext 설정 완료 - URI: {}, UserId: {}", 
+                                requestURI, context.getUserId());
+                    }
+                } catch (Exception redisException) {
+                    // Redis 연결 실패 시 로그만 출력하고 계속 진행
+                    log.warn("Redis 연결 실패 - 로컬 개발 환경일 수 있습니다. URI: {}, Error: {}", 
+                            requestURI, redisException.getMessage());
                 }
             }
             

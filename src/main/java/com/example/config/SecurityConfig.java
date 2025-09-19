@@ -131,6 +131,13 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         
+        // CORS 설정 로그 출력
+        System.out.println("=== CORS 설정 ===");
+        System.out.println("Allowed Origins: " + Arrays.toString(allowedOrigins));
+        System.out.println("Allowed Methods: " + configuration.getAllowedMethods());
+        System.out.println("Allow Credentials: " + configuration.getAllowCredentials());
+        System.out.println("==================");
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -171,7 +178,10 @@ public class SecurityConfig {
         return new String[]{
             "http://localhost:5173",
             "http://localhost:3000",
-            "http://127.0.0.1:5173"
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:8080"
         };
     }
 }

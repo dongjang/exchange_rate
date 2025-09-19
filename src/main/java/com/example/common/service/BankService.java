@@ -20,6 +20,7 @@ public class BankService {
         Long userId = SessionContext.getCurrentUserId();
 
         UserBankAccount existing = userBankAccountRepository.findByUserId(userId);
+
         if (existing != null) {
             existing.setBankCode(account.getBankCode());
             existing.setAccountNumber(account.getAccountNumber());
@@ -27,7 +28,9 @@ public class BankService {
             return userBankAccountRepository.save(existing);
         } 
         else {
-            account.setUpdatedAt(LocalDateTime.now());
+            System.out.println("account: " + account);
+            account.setCreatedAt(LocalDateTime.now());
+            account.setUserId(userId);
             return userBankAccountRepository.save(account);
         }
     }

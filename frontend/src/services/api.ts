@@ -5,7 +5,7 @@ import type { MyBankAccount } from '../store/myBankAccountStore';
 
 const API_BASE_URL = 
   import.meta.env.VITE_API_BASE_URL || 
-  (window.location.hostname.includes('vercel.app') ? '' : 'http://localhost:8081/api');
+  (window.location.hostname.includes('vercel.app') ? '' : 'http://localhost:8080/api');
 
 // 전역 로딩 상태 관리
 let loadingCount = 0;
@@ -55,6 +55,20 @@ axios.interceptors.response.use(
   (error) => {
     // 에러 발생 시에도 로딩 상태 감소
     updateLoadingState(false);
+    
+    // 400 에러 상세 정보 출력
+    if (error.response?.status === 400) {
+      console.error("=== 400 에러 상세 정보 ===");
+      console.error("URL:", error.config?.url);
+      console.error("Method:", error.config?.method?.toUpperCase());
+      console.error("Headers:", error.config?.headers);
+      console.error("Request Data:", error.config?.data);
+      console.error("Response Status:", error.response.status);
+      console.error("Response Data:", error.response.data);
+      console.error("Response Headers:", error.response.headers);
+      console.error("==========================");
+    }
+    
     return Promise.reject(error);
   }
 );

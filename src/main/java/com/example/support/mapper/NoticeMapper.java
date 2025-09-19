@@ -1,11 +1,11 @@
 package com.example.support.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.support.dto.NoticeResponse;
 import com.example.support.dto.NoticeSearchRequest;
-
-import java.util.List;
 
 @Mapper
 public interface NoticeMapper {

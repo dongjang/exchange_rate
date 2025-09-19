@@ -37,7 +37,7 @@ public class QnaController {
     
     @GetMapping("/{qnaId}")
     public ResponseEntity<QnaResponse> getQnaById(
-            @PathVariable Long qnaId) {
+            @PathVariable("qnaId") Long qnaId) {
                 
         QnaResponse qna = userQnaService.getQnaById(qnaId);
         
@@ -54,7 +54,7 @@ public class QnaController {
     
     @PutMapping("/{qnaId}")
     public ResponseEntity<QnaResponse> updateQna(
-            @PathVariable Long qnaId,
+            @PathVariable("qnaId") Long qnaId,
             @ModelAttribute QnaRequest request,
             @AuthenticationPrincipal OAuth2User oauth2User) {
                 
@@ -64,7 +64,7 @@ public class QnaController {
     
     @PostMapping("/{qnaId}/cancel")
     public ResponseEntity<Void> cancelQna(
-            @PathVariable Long qnaId) {
+            @PathVariable("qnaId") Long qnaId) {
         
         userQnaService.cancelQna(qnaId);
         return ResponseEntity.ok().build();
