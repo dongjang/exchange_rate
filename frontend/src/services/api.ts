@@ -78,6 +78,7 @@ export interface AuthUser {
   email: string;
   name: string;
   pictureUrl: string;
+  picture?: string;
   status: string;
 }
 

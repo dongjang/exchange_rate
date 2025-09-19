@@ -67,16 +67,16 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   const [isSubmitBtnHover, setIsSubmitBtnHover] = useState(false);
 
   // 동적 은행 상태 관리
-  const senderBanks = useAtomValue(banksAtom('KRW')) || [];
-  const fetchSenderBanks = useSetAtom(fetchBanksAtom('KRW'));
+  const senderBanks = (useAtomValue(banksAtom('KRW') as any) || []) as any[];
+  const fetchSenderBanks = useSetAtom(fetchBanksAtom('KRW') as any);
   useEffect(() => {
     if (userInfo?.id && (!senderBanks || senderBanks.length === 0)) {
       fetchSenderBanks();
     }
   }, [senderBanks, fetchSenderBanks]);
 
-  const receiverBanks = useAtomValue(banksAtom(selectedCurrency?.value || '')) || [];
-  const fetchReceiverBanks = useSetAtom(fetchBanksAtom(selectedCurrency?.value || ''));
+  const receiverBanks = (useAtomValue(banksAtom(selectedCurrency?.value || '') as any) || []) as any[];
+  const fetchReceiverBanks = useSetAtom(fetchBanksAtom(selectedCurrency?.value || '') as any);
   useEffect(() => {
     if (selectedCurrency?.value) {
       fetchReceiverBanks();
@@ -147,9 +147,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         title: '정보를 모두 입력해 주세요.', 
         customClass: { 
           popup: 'swal2-z-top', 
-          container: 'swal2-z-top',
-          backdrop: 'swal2-z-top'
-        },
+          container: 'swal2-z-top'
+        } as any,
         zIndex: 99999
       });
       return;
@@ -161,9 +160,8 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         title: '계좌번호를 5자리 이상 입력해 주세요', 
         customClass: { 
           popup: 'swal2-z-top', 
-          container: 'swal2-z-top',
-          backdrop: 'swal2-z-top'
-        },
+          container: 'swal2-z-top'
+        } as any,
         zIndex: 99999
       });
       return;

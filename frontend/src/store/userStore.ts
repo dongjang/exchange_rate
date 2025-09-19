@@ -21,4 +21,12 @@ export const selectedUserAtom = atom<User | null>(null);
 export const loadingAtom = atom<boolean>(false);
 
 // 에러 상태
-export const errorAtom = atom<string | null>(null); 
+export const errorAtom = atom<string | null>(null);
+
+// 사용자 정보 업데이트 함수
+export const updateUserAtom = atom(
+  null,
+  (get: any, set: any, user: User) => {
+    set(userInfoAtom, user);
+  }
+); 

@@ -17,7 +17,7 @@ interface HeaderProps {
 
 function Header({ user, onUserUpdated }: HeaderProps) {
   const navigate = useNavigate();
-  const setSelectedUser = useSetAtom(selectedUserAtom);
+  const setSelectedUser = useSetAtom(selectedUserAtom as any);
   const [, setAuthState] = useAtom(setAuthAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

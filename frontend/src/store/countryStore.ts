@@ -25,7 +25,7 @@ export const getRemittanceCountries = atom(
   async (get: Getter, set: Setter) => {
     if (!get(remittanceCountriesAtom) && get(userInfoAtom)?.id) {
       const data = await api.getRemittanceCountries();
-      set(remittanceCountriesAtom, data);
+      set(remittanceCountriesAtom as any, data);
     }
   }
 );
