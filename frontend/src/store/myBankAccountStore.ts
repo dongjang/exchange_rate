@@ -18,9 +18,9 @@ export const banksAtom = atomFamily<string, SenderBank[] | null>(
   (currencyCode) => atom<SenderBank[] | null>(null)
 );
 
-export const fetchBanksAtom = atomFamily<string, null>(
+export const fetchBanksAtom = atomFamily<string, any>(
   (currencyCode) =>
-    atom(null, async (get, set) => {
+    atom(null, async (get: any, set: any) => {
       const banksAtomInst = banksAtom(currencyCode);
       if (!get(banksAtomInst)) {
         const data = await api.getBanks(currencyCode);

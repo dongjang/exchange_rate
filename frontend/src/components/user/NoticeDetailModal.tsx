@@ -277,7 +277,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes modalSlideIn {
           from {
             opacity: 0;

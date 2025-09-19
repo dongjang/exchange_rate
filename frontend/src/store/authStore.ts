@@ -4,6 +4,7 @@ import type { AuthUser } from '../services/api';
 export interface AuthState {
   isAuthenticated: boolean | 'unknown';
   isLoading: boolean;
+  user?: AuthUser;
 }
 
 export const authAtom = atom<AuthState>({
