@@ -43,8 +43,8 @@ public class Remittance {
     @Column(length = 10, nullable = false)
     private String currency;
 
-    @Column(length = 20, nullable = false)
-    private String status = "COMPLETED";
+    @Column(length = 20, nullable = false, columnDefinition = "varchar(20) default 'COMPLETED'")
+    private String status;
 
     @Column(name = "exchange_rate", precision = 10, scale = 6)
     private BigDecimal exchangeRate;
