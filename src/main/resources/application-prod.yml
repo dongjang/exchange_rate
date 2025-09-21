@@ -27,9 +27,9 @@ spring:
   
   data:
     redis:
-      # AWS ElastiCache Redis 연결 정보
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      # EC2 Docker Redis 연결 정보
+      host: localhost
+      port: 6379
       timeout: 2000ms
       # password: # AWS ElastiCache는 기본적으로 비밀번호 없음
       lettuce:
