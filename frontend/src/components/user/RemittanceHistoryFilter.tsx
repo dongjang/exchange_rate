@@ -470,7 +470,7 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
       <div style={{
         display: 'flex',
         flexWrap: 'nowrap',
-        gap: isMobile ? '0.4rem' : '0.7rem',
+        gap: isMobile ? '0.3rem' : '0.7rem',
         marginBottom: isMobile ? '0.75rem' : '1.5rem',
         overflowX: 'auto',
         overflowY: 'visible',
@@ -479,6 +479,7 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
         paddingBottom: '0.2rem',
         paddingTop: '0.3rem',
         width: '100%',
+        justifyContent: isMobile ? 'center' : 'flex-start',
       }}>
         {[
           { key: 'today', label: '오늘' },
@@ -493,14 +494,14 @@ const RemittanceHistoryFilter: React.FC<RemittanceHistoryFilterProps> = ({
             key={key}
             onClick={() => handleQuickDateRange(key)}
             style={{
-              flex: 1,
-              minWidth: 0,
-              padding: isMobile ? '0.3rem 0.6rem' : '0.38rem 0.95rem',
+              flex: isMobile ? '0 0 auto' : 1,
+              minWidth: isMobile ? 'fit-content' : 0,
+              padding: isMobile ? '0.25rem 0.5rem' : '0.38rem 0.95rem',
               background: 'linear-gradient(90deg, #f0f6ff 0%, #e0e7ef 100%)',
               color: '#2563eb',
               border: '1.2px solid #dbeafe',
               borderRadius: '1.1rem',
-              fontSize: isMobile ? '0.75rem' : '0.92rem',
+              fontSize: isMobile ? '0.7rem' : '0.92rem',
               fontWeight: 600,
               letterSpacing: '0.01em',
               cursor: 'pointer',

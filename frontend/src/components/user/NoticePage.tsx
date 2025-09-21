@@ -155,9 +155,14 @@ const NoticePage: React.FC = () => {
 
   // 반응형 감지
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 400);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -168,7 +173,7 @@ const NoticePage: React.FC = () => {
     {
       key: 'title',
       label: '제목',
-      width: isMobile ? '4.5fr' : '4fr',
+      width: isSmallMobile ? '2.5fr' : isMobile ? '4fr' : '4fr',
       render: (notice: Notice) => (
         <div style={{
           fontWeight: '500',
@@ -183,30 +188,35 @@ const NoticePage: React.FC = () => {
     },
     {
       key: 'priority',
-      label: '중요도',
-      width: '1fr',
+      label: isSmallMobile ? '중요' : '중요도',
+      width: isSmallMobile ? '1fr' : '1fr',
       align: 'center' as const,
       render: (notice: Notice) => (
         <span style={{
-          padding: isMobile ? '3px 8px' : '4px 12px',
+          padding: isSmallMobile ? '2px 6px' : isMobile ? '3px 8px' : '4px 12px',
           borderRadius: '20px',
-          fontSize: isMobile ? '10px' : '12px',
+          fontSize: isSmallMobile ? '10px' : isMobile ? '10px' : '12px',
           fontWeight: '600',
           backgroundColor: getPriorityColor(notice.priority) + '20',
-          color: getPriorityColor(notice.priority)
+          color: getPriorityColor(notice.priority),
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: 'fit-content'
         }}>
-          {isMobile ? (getPriorityLabel(notice.priority) === '높음' ? '높음' : '보통') : getPriorityLabel(notice.priority)}
+          {isSmallMobile ? (getPriorityLabel(notice.priority) === '높음' ? '높음' : '보통') : 
+           isMobile ? (getPriorityLabel(notice.priority) === '높음' ? '높음' : '보통') : 
+           getPriorityLabel(notice.priority)}
         </span>
       )
     },
     {
       key: 'viewCount',
-      label: '조회수',
-      width: '1fr',
+      label: isSmallMobile ? '조회' : '조회수',
+      width: isSmallMobile ? '0.6fr' : '1fr',
       align: 'right' as const,
       render: (notice: Notice) => (
         <div style={{ 
-          fontSize: isMobile ? '11px' : '14px', 
+          fontSize: isSmallMobile ? '10px' : isMobile ? '11px' : '14px', 
           color: '#64748b',
           textAlign: 'right'
         }}>
@@ -216,19 +226,25 @@ const NoticePage: React.FC = () => {
     },
     {
       key: 'createdAt',
-      label: '등록일',
-      width: isMobile ? '1.5fr' : '1fr',
+      label: isSmallMobile ? '날짜' : '등록일',
+      width: isSmallMobile ? '1.2fr' : isMobile ? '1.5fr' : '1fr',
       align: 'center' as const,
       render: (notice: Notice) => (
         <div style={{ 
-          fontSize: isMobile ? '11px' : '14px', 
+          fontSize: isSmallMobile ? '10px' : isMobile ? '11px' : '14px', 
           color: '#64748b' 
         }}>
-          {new Date(notice.createdAt).toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-          })}
+          {isSmallMobile ? 
+            new Date(notice.createdAt).toLocaleDateString('ko-KR', {
+              month: '2-digit',
+              day: '2-digit'
+            }) :
+            new Date(notice.createdAt).toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            })
+          }
         </div>
       )
     }

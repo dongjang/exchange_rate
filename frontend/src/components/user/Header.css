@@ -399,7 +399,7 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0;
 }
 
 .mobile-menu-container.slide-down {
@@ -413,11 +413,11 @@
 .mobile-menu-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
   color: #374151;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
@@ -467,14 +467,134 @@
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .header-content {
-    padding: 0 20px;
+    padding: 0 16px;
     height: 60px;
     margin: 0;
     max-width: none;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .header-left, .header-nav, .header-right {
     display: none !important;
+  }
+  
+  .user-mobile-header-left,
+  .user-mobile-header-center,
+  .user-mobile-header-right {
+    flex-shrink: 0;
+  }
+}
+
+/* 작은 모바일 화면 (410px 미만) */
+@media (max-width: 410px) {
+  .header-content {
+    padding: 0 12px;
+    height: 55px;
+    gap: 0.5rem;
+  }
+  
+  .user-mobile-header-left {
+    flex: 0.8;
+    min-width: 50px;
+  }
+  
+  .user-mobile-header-center {
+    flex: 1.5;
+    gap: 0.5rem;
+  }
+  
+  .user-mobile-header-right {
+    flex: 0.8;
+    min-width: 50px;
+  }
+  
+  .home-button-mobile {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .user-info-mobile {
+    padding: 0.4rem 0.6rem;
+    margin-right: 0.3rem;
+  }
+  
+  .user-avatar-mobile {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .user-name-mobile {
+    font-size: 0.8rem;
+    max-width: 80px;
+  }
+  
+  .logout-button-mobile {
+    width: 80px;
+    height: 36px;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
+  
+  .mobile-menu-btn {
+    width: 38px;
+    height: 38px;
+    margin-left: 0.3rem;
+  }
+  
+  .mobile-menu-icon {
+    width: 20px;
+  }
+  
+  .mobile-menu-icon::before,
+  .mobile-menu-icon::after {
+    width: 20px;
+  }
+}
+
+/* 매우 작은 모바일 화면 (360px 미만) */
+@media (max-width: 360px) {
+  .header-content {
+    padding: 0 8px;
+    height: 50px;
+    gap: 0.3rem;
+  }
+  
+  .user-mobile-header-center {
+    gap: 0.3rem;
+  }
+  
+  .user-info-mobile {
+    padding: 0.3rem 0.4rem;
+    margin-right: 0.2rem;
+  }
+  
+  .user-avatar-mobile {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .user-name-mobile {
+    font-size: 0.75rem;
+    max-width: 60px;
+  }
+  
+  .home-button-mobile {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .logout-button-mobile {
+    width: 75px;
+    height: 34px;
+    padding: 0 0.25rem;
+    font-size: 0.7rem;
+  }
+  
+  .mobile-menu-btn {
+    width: 34px;
+    height: 34px;
+    margin-left: 0.2rem;
   }
 }
 

@@ -45,7 +45,7 @@ const CommonPageHeader: React.FC<CommonPageHeaderProps> = ({
         pointerEvents: 'none'
       }} />
       <h1 style={{
-        fontSize: isMobile ? '1.8rem' : '2.5rem',
+        fontSize: isMobile ? '1.3rem' : '2.5rem',
         fontWeight: '700',
         margin: isMobile ? '0 0 8px 0' : '0 0 10px 0',
         position: 'relative',

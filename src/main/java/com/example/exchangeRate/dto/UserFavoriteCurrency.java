@@ -21,7 +21,7 @@ public class UserFavoriteCurrency {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_user_favorite_currency_user"))
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "currency_code", length = 10, nullable = false)

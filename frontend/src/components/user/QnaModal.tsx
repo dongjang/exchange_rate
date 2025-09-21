@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 interface Qna {
   id: number;
@@ -38,6 +38,19 @@ const QnaModal: React.FC<QnaModalProps> = ({
   isSubmitting
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -75,21 +88,26 @@ const QnaModal: React.FC<QnaModalProps> = ({
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 1000,
-      backdropFilter: 'blur(4px)'
+      backdropFilter: 'blur(4px)',
+      padding: isMobile ? '1rem 0.5rem' : '0',
+      boxSizing: 'border-box',
+      overflowY: 'auto'
     }}>
       <div style={{
         background: 'white',
-        borderRadius: '20px',
-        width: '90%',
-        maxWidth: '700px',
-        maxHeight: '90vh',
+        borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
+        width: isSmallMobile ? '95%' : isMobile ? '90%' : '90%',
+        maxWidth: isSmallMobile ? '400px' : isMobile ? '500px' : '700px',
+        maxHeight: isSmallMobile ? '95vh' : isMobile ? '95vh' : '90vh',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
+        boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        marginTop: isMobile ? '1rem' : '0',
+        marginBottom: isMobile ? '1rem' : '0'
       }}>
         {/* 모달 헤더 */}
         <div style={{
-          padding: '32px 32px 24px 32px',
+          padding: isSmallMobile ? '16px 20px 12px 20px' : isMobile ? '20px 24px 16px 24px' : '32px 32px 24px 32px',
           borderBottom: '1px solid #f1f5f9',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           position: 'relative',
@@ -106,7 +124,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
           }} />
           <h2 style={{
             margin: 0,
-            fontSize: '1.75rem',
+            fontSize: isSmallMobile ? '1.1rem' : isMobile ? '1.3rem' : '1.75rem',
             fontWeight: '700',
             color: 'white',
             position: 'relative',
@@ -119,27 +137,27 @@ const QnaModal: React.FC<QnaModalProps> = ({
 
         {/* 모달 바디 */}
         <div style={{ 
-          padding: '32px', 
-          maxHeight: '60vh', 
+          padding: isSmallMobile ? '12px 16px' : isMobile ? '16px 20px' : '32px', 
+          maxHeight: isSmallMobile ? '70vh' : isMobile ? '70vh' : '60vh', 
           overflowY: 'auto',
         }}>
-          <div style={{ marginBottom: '28px' }}>
+          <div style={{ marginBottom: isSmallMobile ? '16px' : isMobile ? '20px' : '28px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '10px',
+              marginBottom: isSmallMobile ? '4px' : isMobile ? '6px' : '10px',
               fontWeight: '600',
               color: '#1e293b',
-              fontSize: '15px'
+              fontSize: isSmallMobile ? '15px' : isMobile ? '15px' : '15px'
             }}>
               제목 {editingQna && editingQna.status === 'ANSWERED' ? '' : <span style={{ color: '#ef4444', fontWeight: '700' }}>*</span>}
             </label>
             {editingQna && editingQna.status === 'ANSWERED' ? (
               <div style={{
                 width: '100%',
-                padding: '16px 20px',
+                padding: isSmallMobile ? '10px 12px' : isMobile ? '12px 14px' : '16px 20px',
                 border: '2px solid #e2e8f0',
-                borderRadius: '12px',
-                fontSize: '15px',
+                borderRadius: isSmallMobile ? '6px' : isMobile ? '8px' : '12px',
+                fontSize: isSmallMobile ? '15px' : isMobile ? '12px' : '15px',
                 boxSizing: 'border-box',
                 background: '#f8fafc',
                 color: '#1e293b'
@@ -153,10 +171,10 @@ const QnaModal: React.FC<QnaModalProps> = ({
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 style={{
                   width: '100%',
-                  padding: '16px 20px',
+                  padding: isSmallMobile ? '10px 12px' : isMobile ? '12px 14px' : '16px 20px',
                   border: '2px solid #e2e8f0',
-                  borderRadius: '12px',
-                  fontSize: '15px',
+                  borderRadius: isSmallMobile ? '6px' : isMobile ? '8px' : '12px',
+                  fontSize: isSmallMobile ? '15px' : isMobile ? '15px' : '15px',
                   boxSizing: 'border-box',
                   transition: 'all 0.2s ease',
                   background: 'white'
@@ -175,27 +193,27 @@ const QnaModal: React.FC<QnaModalProps> = ({
             )}
           </div>
 
-          <div style={{ marginBottom: '28px' }}>
+          <div style={{ marginBottom: isSmallMobile ? '16px' : isMobile ? '20px' : '28px' }}>
             <label style={{
               display: 'block',
-              marginBottom: '10px',
+              marginBottom: isSmallMobile ? '4px' : isMobile ? '6px' : '10px',
               fontWeight: '600',
               color: '#1e293b',
-              fontSize: '15px'
+              fontSize: isSmallMobile ? '15px' : isMobile ? '12px' : '15px'
             }}>
               내용 {editingQna && editingQna.status === 'ANSWERED' ? '' : <span style={{ color: '#ef4444', fontWeight: '700' }}>*</span>}
             </label>
             {editingQna && editingQna.status === 'ANSWERED' ? (
               <div style={{
                 width: '100%',
-                padding: '16px 20px',
+                padding: isSmallMobile ? '10px 12px' : isMobile ? '12px 14px' : '16px 20px',
                 border: '2px solid #e2e8f0',
-                borderRadius: '12px',
-                fontSize: '15px',
+                borderRadius: isSmallMobile ? '6px' : isMobile ? '8px' : '12px',
+                fontSize: isSmallMobile ? '15px' : isMobile ? '15px' : '15px',
                 boxSizing: 'border-box',
                 background: '#f8fafc',
                 color: '#1e293b',
-                minHeight: '120px',
+                minHeight: isSmallMobile ? '100px' : isMobile ? '110px' : '120px',
                 lineHeight: '1.6',
                 whiteSpace: 'pre-wrap'
               }}>
@@ -205,13 +223,13 @@ const QnaModal: React.FC<QnaModalProps> = ({
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                rows={8}
+                rows={isSmallMobile ? 6 : isMobile ? 7 : 8}
                 style={{
                   width: '100%',
-                  padding: '16px 20px',
+                  padding: isSmallMobile ? '10px 12px' : isMobile ? '12px 14px' : '16px 20px',
                   border: '2px solid #e2e8f0',
-                  borderRadius: '12px',
-                  fontSize: '15px',
+                  borderRadius: isSmallMobile ? '6px' : isMobile ? '8px' : '12px',
+                  fontSize: isSmallMobile ? '15px' : isMobile ? '15px' : '15px',
                   resize: 'vertical',
                   boxSizing: 'border-box',
                   transition: 'all 0.2s ease',
@@ -457,21 +475,22 @@ const QnaModal: React.FC<QnaModalProps> = ({
                    ⚠️
                  </div>
                  <div>
-                   <div style={{
-                     fontWeight: '600',
-                     color: '#92400e',
-                     fontSize: '14px',
-                     marginBottom: '4px'
-                   }}>
-                     문의 취소 안내
-                   </div>
-                   <div style={{
-                     color: '#92400e',
-                     fontSize: '13px',
-                     lineHeight: '1.5'
-                   }}>
-                     아직 답변이 완료되지 않은 문의입니다. 문의를 취소하시면 더 이상 수정할 수 없습니다.
-                   </div>
+                  <div style={{
+                    fontWeight: '600',
+                    color: '#92400e',
+                    fontSize: isSmallMobile ? '12px' : isMobile ? '12px' : '14px',
+                    marginBottom: '4px'
+                  }}>
+                    문의 취소 안내
+                  </div>
+                  <div style={{
+                    color: '#92400e',
+                    fontSize: isSmallMobile ? '11px' : isMobile ? '14px' : '13px',
+                    lineHeight: '1.5'
+                  }}>
+                    아직 답변이 완료되지 않은 문의입니다.<br />
+                    문의를 취소하시면 더 이상 수정할 수 없습니다.
+                  </div>
                  </div>
                </div>
              </div>
@@ -511,10 +530,10 @@ const QnaModal: React.FC<QnaModalProps> = ({
 
         {/* 모달 푸터 */}
         <div style={{
-          padding: '24px 32px 32px 32px',
+          padding: isSmallMobile ? '16px 20px 20px 20px' : isMobile ? '20px 24px 24px 24px' : '24px 32px 32px 32px',
           borderTop: '1px solid #f1f5f9',
           display: 'flex',
-          gap: '16px',
+          gap: isSmallMobile ? '8px' : isMobile ? '12px' : '16px',
           justifyContent: 'flex-end',
           background: 'white'
         }}>
@@ -522,13 +541,13 @@ const QnaModal: React.FC<QnaModalProps> = ({
             <button
               onClick={onCancel}
               style={{
-                padding: '14px 28px',
+                padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 20px' : '14px 28px',
                 backgroundColor: '#ef4444',
                 color: 'white',
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: isSmallMobile ? '6px' : isMobile ? '8px' : '12px',
                 cursor: 'pointer',
-                fontSize: '15px',
+                fontSize: isSmallMobile ? '11px' : isMobile ? '12px' : '15px',
                 fontWeight: '600',
                 transition: 'all 0.2s ease',
                 boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
@@ -549,13 +568,13 @@ const QnaModal: React.FC<QnaModalProps> = ({
           <button
             onClick={onClose}
             style={{
-              padding: '14px 28px',
+              padding: isSmallMobile ? '10px 20px' : isMobile ? '12px 24px' : '14px 28px',
               backgroundColor: 'white',
               color: '#64748b',
               border: '2px solid #e2e8f0',
-              borderRadius: '12px',
+              borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
               cursor: 'pointer',
-              fontSize: '15px',
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '15px',
               fontWeight: '600',
               transition: 'all 0.2s ease',
               boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
@@ -580,13 +599,13 @@ const QnaModal: React.FC<QnaModalProps> = ({
             onClick={onSubmit}
             disabled={isSubmitting}
             style={{
-              padding: '14px 28px',
+              padding: isSmallMobile ? '10px 20px' : isMobile ? '12px 24px' : '14px 28px',
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               border: 'none',
-              borderRadius: '12px',
+              borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              fontSize: '15px',
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '15px',
               fontWeight: '600',
               transition: 'all 0.2s ease',
               boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)',

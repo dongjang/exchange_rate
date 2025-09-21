@@ -24,9 +24,14 @@ const CommonDataTable: React.FC<CommonDataTableProps> = ({
   isLoading = false
 }) => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 400);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -40,21 +45,21 @@ const CommonDataTable: React.FC<CommonDataTableProps> = ({
   return (
     <div style={{
       background: 'white',
-      borderRadius: isMobile ? '12px' : '16px',
-      padding: isMobile ? '16px' : '24px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      marginBottom: isMobile ? '16px' : '24px'
+      borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '16px',
+      padding: isSmallMobile ? '8px' : isMobile ? '12px' : '24px',
+      boxShadow: isSmallMobile ? '0 1px 3px rgba(0, 0, 0, 0.06)' : isMobile ? '0 2px 4px rgba(0, 0, 0, 0.08)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      marginBottom: isSmallMobile ? '12px' : isMobile ? '14px' : '24px'
     }}>
       {/* 헤더 */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: columns.map(col => col.width || '1fr').join(' '),
-        gap: isMobile ? '12px' : '16px',
-        padding: isMobile ? '12px 0' : '16px 0',
+        gap: isSmallMobile ? '6px' : isMobile ? '8px' : '16px',
+        padding: isSmallMobile ? '8px 0' : isMobile ? '10px 0' : '16px 0',
         borderBottom: '2px solid #e2e8f0',
         fontWeight: '600',
         color: '#374151',
-        fontSize: isMobile ? '12px' : '14px'
+        fontSize: isSmallMobile ? '10px' : isMobile ? '11px' : '14px'
       }}>
         {columns.map((column) => (
           <div key={column.key} style={getColumnStyle(column)}>
@@ -89,13 +94,13 @@ const CommonDataTable: React.FC<CommonDataTableProps> = ({
             style={{
               display: 'grid',
               gridTemplateColumns: columns.map(col => col.width || '1fr').join(' '),
-              gap: isMobile ? '12px' : '16px',
-              padding: isMobile ? '12px 0' : '16px 0',
+              gap: isSmallMobile ? '6px' : isMobile ? '8px' : '16px',
+              padding: isSmallMobile ? '8px 0' : isMobile ? '10px 0' : '16px 0',
               borderBottom: '1px solid #f1f5f9',
               alignItems: 'center',
               cursor: onRowClick ? 'pointer' : 'default',
               transition: 'background-color 0.2s ease',
-              fontSize: isMobile ? '12px' : '14px'
+              fontSize: isSmallMobile ? '10px' : isMobile ? '11px' : '14px'
             }}
             onMouseEnter={(e) => {
               if (onRowClick) {

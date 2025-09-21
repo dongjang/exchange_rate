@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Notice {
   id: number;
@@ -26,6 +26,21 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
   notice,
   onClose
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (!isOpen || !notice) return null;
 
   const formatDate = (dateString: string) => {
@@ -68,27 +83,29 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
       right: 0,
       bottom: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 1000,
+      backdropFilter: 'blur(4px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 1000,
-      backdropFilter: 'blur(4px)'
+      overflowY: 'auto'
     }} onClick={onClose}>
       <div style={{
         background: 'white',
-        borderRadius: '20px',
-        maxWidth: '600px',
-        width: '90%',
-        maxHeight: '80vh',
+        borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
+        maxWidth: isSmallMobile ? 'calc(100vw - 2rem)' : isMobile ? 'calc(100vw - 3rem)' : '600px',
+        width: isSmallMobile ? '95%' : isMobile ? '90%' : '90%',
+        maxHeight: isSmallMobile ? '90vh' : isMobile ? '85vh' : '80vh',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        animation: 'modalSlideIn 0.3s ease-out'
+        boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        animation: 'modalSlideIn 0.3s ease-out',
+        position: 'relative'
       }} onClick={(e) => e.stopPropagation()}>
         
         {/* 헤더 */}
         <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          padding: '24px 32px',
+          padding: isSmallMobile ? '16px 20px' : isMobile ? '20px 24px' : '24px 32px',
           color: 'white',
           position: 'relative',
           overflow: 'hidden'
@@ -117,7 +134,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
               <div>
                 <h2 style={{
                   margin: 0,
-                  fontSize: '25px',
+                  fontSize: isSmallMobile ? '18px' : isMobile ? '20px' : '25px',
                   fontWeight: '700',
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                 }}>
@@ -131,14 +148,14 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
                 background: 'rgba(255, 255, 255, 0.2)',
                 border: 'none',
                 borderRadius: '50%',
-                width: '32px',
-                height: '32px',
+                width: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
+                height: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
                 transition: 'background-color 0.2s ease'
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'}
@@ -151,8 +168,8 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
 
         {/* 내용 */}
         <div style={{
-          padding: '32px',
-          maxHeight: '60vh',
+          padding: isSmallMobile ? '20px' : isMobile ? '24px' : '32px',
+          maxHeight: isSmallMobile ? '55vh' : isMobile ? '60vh' : '60vh',
           overflowY: 'auto'
         }}>
           {/* 제목 */}
@@ -163,7 +180,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
           }}>
                          <h3 style={{
                margin: 0,
-               fontSize: '18px',
+               fontSize: isSmallMobile ? '16px' : isMobile ? '17px' : '18px',
                fontWeight: '600',
                color: '#1e293b',
                lineHeight: '1.4'
@@ -178,7 +195,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
           }}>
             <h4 style={{
               margin: '0 0 12px 0',
-              fontSize: '14px',
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '14px',
               fontWeight: '600',
               color: '#64748b',
               textTransform: 'uppercase',
@@ -187,11 +204,11 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
               공지 내용
             </h4>
             <div style={{
-              padding: '16px',
+              padding: isSmallMobile ? '12px' : isMobile ? '14px' : '16px',
               backgroundColor: '#f8fafc',
-              borderRadius: '12px',
+              borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
               border: '1px solid #e2e8f0',
-              fontSize: '14px',
+              fontSize: isSmallMobile ? '13px' : isMobile ? '13px' : '14px',
               lineHeight: '1.6',
               color: '#374151',
               whiteSpace: 'pre-wrap'
@@ -202,14 +219,14 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
 
           {/* 메타 정보 */}
           <div style={{
-            padding: '16px',
+            padding: isSmallMobile ? '12px' : isMobile ? '14px' : '16px',
             backgroundColor: '#f8fafc',
-            borderRadius: '12px',
+            borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
             border: '1px solid #e2e8f0'
           }}>
             <h4 style={{
               margin: '0 0 12px 0',
-              fontSize: '14px',
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '14px',
               fontWeight: '600',
               color: '#64748b',
               textTransform: 'uppercase',
@@ -219,9 +236,9 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
             </h4>
               <div style={{
                display: 'grid',
-               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-               gap: '12px',
-               fontSize: '13px'
+               gridTemplateColumns: isSmallMobile ? '1fr' : isMobile ? 'repeat(auto-fit, minmax(150px, 1fr))' : 'repeat(auto-fit, minmax(200px, 1fr))',
+               gap: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
+               fontSize: isSmallMobile ? '12px' : isMobile ? '12px' : '13px'
              }}>
                <div>
                  <span style={{ color: '#64748b', fontWeight: '500' }}>중요도:</span>
@@ -251,7 +268,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
 
         {/* 하단 버튼 */}
         <div style={{
-          padding: '24px 32px',
+          padding: isSmallMobile ? '16px 20px' : isMobile ? '20px 24px' : '24px 32px',
           borderTop: '1px solid #e2e8f0',
           display: 'flex',
           justifyContent: 'center'
@@ -259,12 +276,12 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
           <button
             onClick={onClose}
             style={{
-              padding: '12px 32px',
+              padding: isSmallMobile ? '10px 24px' : isMobile ? '11px 28px' : '12px 32px',
               backgroundColor: '#667eea',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
+              borderRadius: isSmallMobile ? '6px' : isMobile ? '7px' : '8px',
+              fontSize: isSmallMobile ? '13px' : isMobile ? '13px' : '14px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'background-color 0.2s ease'

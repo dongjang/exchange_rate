@@ -17,7 +17,6 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
-  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -166,10 +165,12 @@
   }
   
   .remittance-limit-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
     margin-bottom: 12px;
+    flex-wrap: wrap;
   }
   
   .remittance-limit-icon {
@@ -243,6 +244,7 @@
   .remittance-limit-header {
     gap: 8px;
     margin-bottom: 8px;
+    flex-wrap: wrap;
   }
   
   .remittance-limit-icon {
@@ -292,6 +294,7 @@
     text-align: right;
   }
 }
+
 
 /* 태블릿 중간 크기 */
 @media (min-width: 769px) and (max-width: 1024px) {

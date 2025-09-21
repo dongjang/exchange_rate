@@ -37,6 +37,7 @@ function RemittanceHistoryPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const [filters, setFilters] = useState({
     recipient: '',
     minAmount: '',
@@ -49,6 +50,13 @@ function RemittanceHistoryPage() {
     sortOrder: 'latest' // 기본값: 최신순
   });
   const [selectedRemittance, setSelectedRemittance] = useState<RemittanceHistory | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const fetchRemittances = async () => {
     try {
@@ -189,7 +197,10 @@ function RemittanceHistoryPage() {
   };
 
   return (
-    <div style={{ maxWidth: 650, margin: '0.9rem auto 2.5rem'}}>
+    <div style={{ 
+      maxWidth: 650, 
+      margin: isMobile ? '0' : '0.9rem auto 2.5rem'
+    }}>
       <CommonPageHeader
         title="📋 송금 이력"
         subtitle="송금 내역을 확인하실 수 있습니다"

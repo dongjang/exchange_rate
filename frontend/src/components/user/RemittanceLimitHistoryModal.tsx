@@ -47,9 +47,15 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<RemittanceLimitRequest | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 480);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -170,30 +176,33 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: isMobile ? 'flex-start' : 'center',
       zIndex: 1000,
-      padding: '1rem'
+      padding: isMobile ? '1rem 0.5rem' : '1rem',
+      overflowY: 'auto'
     }}>
       <div style={{
         background: 'white',
-        borderRadius: '16px',
-        padding: '2rem',
-        maxWidth: '800px',
+        borderRadius: isSmallMobile ? '12px' : isMobile ? '14px' : '16px',
+        padding: isSmallMobile ? '1.2rem' : isMobile ? '1.5rem' : '2rem',
+        maxWidth: isSmallMobile ? '95%' : isMobile ? '90%' : '800px',
         width: '100%',
-        maxHeight: '90vh',
+        maxHeight: isSmallMobile ? '95vh' : isMobile ? '90vh' : '90vh',
         overflow: 'auto',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        marginTop: isMobile ? '1rem' : '0',
+        marginBottom: isMobile ? '1rem' : '0'
       }}>
         {/* 헤더 */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '1.5rem'
+          marginBottom: isSmallMobile ? '1rem' : isMobile ? '1.2rem' : '1.5rem'
         }}>
           <h2 style={{
             margin: 0,
-            fontSize: '1.5rem',
+            fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.3rem' : '1.5rem',
             fontWeight: 700,
             color: '#1f2937'
           }}>
@@ -204,10 +213,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
             style={{
               background: 'none',
               border: 'none',
-              fontSize: '1.5rem',
+              fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.3rem' : '1.5rem',
               cursor: 'pointer',
               color: '#6b7280',
-              padding: '0.5rem',
+              padding: isSmallMobile ? '0.3rem' : '0.5rem',
               transition: 'color 0.2s ease'
             }}
             onMouseEnter={(e) => {
@@ -253,8 +262,8 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
               return (
                 <div key={request.id} style={{
                   border: '1px solid #e5e7eb',
-                  borderRadius: '12px',
-                  padding: '1.5rem',
+                  borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
+                  padding: isSmallMobile ? '1rem' : isMobile ? '1.2rem' : '1.5rem',
                   backgroundColor: '#fafafa'
                 }}>
                   {/* 헤더 */}
@@ -262,7 +271,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '1rem'
+                    marginBottom: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem'
                   }}>
                     <div style={{
                       display: 'flex',
@@ -273,17 +282,17 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '32px',
-                        height: '32px',
+                        width: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
+                        height: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
                         borderRadius: '50%',
                         backgroundColor: statusInfo.bgColor,
                         color: statusInfo.color,
-                        fontSize: '0.875rem'
+                        fontSize: isSmallMobile ? '0.75rem' : '0.875rem'
                       }}>
                         {statusInfo.icon}
                       </span>
                       <span style={{
-                        fontSize: '1rem',
+                        fontSize: isSmallMobile ? '0.9rem' : isMobile ? '0.95rem' : '1rem',
                         fontWeight: 600,
                         color: '#374151'
                       }}>
@@ -291,7 +300,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                       </span>
                     </div>
                     <span style={{
-                      fontSize: '0.875rem',
+                      fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem',
                       color: '#6b7280'
                     }}>
                       {formatDate(request.createdAt)}
@@ -301,35 +310,35 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                   {/* 한도 정보 */}
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                    gap: '1rem',
-                    marginBottom: '1rem'
+                    gridTemplateColumns: isSmallMobile ? '1fr' : isMobile ? 'repeat(auto-fit, minmax(120px, 1fr))' : 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem',
+                    marginBottom: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem'
                   }}>
                     <div>
-                      <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>일일 한도</span>
-                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                      <span style={{ fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem', color: '#6b7280' }}>일일 한도</span>
+                      <div style={{ fontSize: isSmallMobile ? '0.9rem' : isMobile ? '0.95rem' : '1rem', fontWeight: 600, color: '#1f2937' }}>
                         {formatCurrency(request.dailyLimit)}
                       </div>
                     </div>
                     <div>
-                      <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>월 한도</span>
-                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                      <span style={{ fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem', color: '#6b7280' }}>월 한도</span>
+                      <div style={{ fontSize: isSmallMobile ? '0.9rem' : isMobile ? '0.95rem' : '1rem', fontWeight: 600, color: '#1f2937' }}>
                         {formatCurrency(request.monthlyLimit)}
                       </div>
                     </div>
                     <div>
-                      <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>1회 한도</span>
-                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                      <span style={{ fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem', color: '#6b7280' }}>1회 한도</span>
+                      <div style={{ fontSize: isSmallMobile ? '0.9rem' : isMobile ? '0.95rem' : '1rem', fontWeight: 600, color: '#1f2937' }}>
                         {formatCurrency(request.singleLimit)}
                       </div>
                     </div>
                   </div>
 
                   {/* 신청 사유 */}
-                  <div style={{ marginBottom: '1rem' }}>
-                    <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>신청 사유</span>
+                  <div style={{ marginBottom: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem' }}>
+                    <span style={{ fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem', color: '#6b7280' }}>신청 사유</span>
                     <div style={{
-                      fontSize: '0.9rem',
+                      fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.85rem' : '0.9rem',
                       color: '#374151',
                       lineHeight: '1.5',
                       marginTop: '0.25rem'
@@ -340,8 +349,8 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
 
                   {/* 첨부 파일 정보 */}
                   {(request.incomeFile || request.bankbookFile || request.businessFile) && (
-                    <div style={{ marginBottom: '1rem' }}>
-                      <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>첨부 파일</span>
+                    <div style={{ marginBottom: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem' }}>
+                      <span style={{ fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.875rem', color: '#6b7280' }}>첨부 파일</span>
                       <div style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -561,9 +570,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                   {/* 액션 버튼 */}
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: '0.5rem',
-                    marginTop: '1rem'
+                    justifyContent: isSmallMobile ? 'center' : 'flex-end',
+                    gap: isSmallMobile ? '0.4rem' : '0.5rem',
+                    marginTop: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem',
+                    flexWrap: 'wrap'
                   }}>
                     {/* PENDING 상태일 때만 신청 취소 버튼 표시 */}
                     {request.status === 'PENDING' && (
@@ -573,12 +583,12 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.5rem',
-                          padding: '0.5rem 1rem',
+                          padding: isSmallMobile ? '0.4rem 0.8rem' : isMobile ? '0.45rem 0.9rem' : '0.5rem 1rem',
                           background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                           color: 'white',
                           border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '0.875rem',
+                          borderRadius: isSmallMobile ? '5px' : '6px',
+                          fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.825rem' : '0.875rem',
                           fontWeight: '500',
                           cursor: 'pointer',
                           transition: 'all 0.2s ease'
@@ -606,12 +616,12 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.5rem',
-                          padding: '0.5rem 1rem',
+                          padding: isSmallMobile ? '0.4rem 0.8rem' : isMobile ? '0.45rem 0.9rem' : '0.5rem 1rem',
                           background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                           color: 'white',
                           border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '0.875rem',
+                          borderRadius: isSmallMobile ? '5px' : '6px',
+                          fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.825rem' : '0.875rem',
                           fontWeight: '500',
                           cursor: 'pointer',
                           transition: 'all 0.2s ease'
@@ -638,23 +648,23 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
         <div style={{
           display: 'flex',
           justifyContent: 'center',
-          marginTop: '2rem',
-          paddingTop: '1.5rem',
+          marginTop: isSmallMobile ? '1.5rem' : isMobile ? '1.7rem' : '2rem',
+          paddingTop: isSmallMobile ? '1rem' : isMobile ? '1.2rem' : '1.5rem',
           borderTop: '1px solid #e5e7eb'
         }}>
           <button
             onClick={onClose}
             style={{
-              padding: '0.75rem 2rem',
+              padding: isSmallMobile ? '0.6rem 1.5rem' : isMobile ? '0.65rem 1.7rem' : '0.75rem 2rem',
               background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
-              fontSize: '0.875rem',
+              borderRadius: isSmallMobile ? '6px' : isMobile ? '7px' : '8px',
+              fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.825rem' : '0.875rem',
               fontWeight: '500',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              minWidth: '120px'
+              minWidth: isSmallMobile ? '100px' : '120px'
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, #4b5563 0%, #374151 100%)';

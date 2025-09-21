@@ -207,8 +207,8 @@ export function ExchangeRates({ user }: { user: User | null }) {
     <div style={{ 
       maxWidth: '1200px', 
       width: '100%',
-      margin: '0 auto', 
-      padding: '1rem',
+      margin: isMobile ? '0' : '0 auto', 
+      padding: isMobile ? '0' : '1rem',
       boxSizing: 'border-box'
     }}>
       {/* 헤더 섹션 */}
@@ -224,55 +224,67 @@ export function ExchangeRates({ user }: { user: User | null }) {
         gap: isMobile ? '0.5rem' : '1rem',
         justifyContent: 'center',
         alignItems: 'center',
-        flexWrap: 'nowrap',
-        flexDirection: 'row',
-        marginBottom: '1.5rem',
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
+        flexDirection: isMobile ? 'column' : 'row',
+        marginBottom: isMobile ? '1rem' : '1.5rem',
         background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
-        borderRadius: '12px',
-        padding: '1.5rem',
+        borderRadius: isMobile ? '8px' : '12px',
+        padding: isMobile ? '0.5rem' : '1.5rem',
         color: '#fff'
       }}>
-        <div style={{ position: 'relative' }}>
+        <div style={{ 
+          position: 'relative',
+          width: isMobile ? '100%' : 'auto'
+        }}>
           <select
             value={countryFilter}
             onChange={e => setCountryFilter(e.target.value as 'all' | 'remittance')}
             style={{
-              padding: isMobile ? '0.4rem 0.7rem' : '0.75rem 1rem',
+              padding: isMobile ? '0.6rem 0.8rem' : '0.75rem 1rem',
               border: 'none',
               borderRadius: '8px',
               background: '#fff',
               color: '#1e293b',
               fontWeight: 500,
-              fontSize: isMobile ? '0.75rem' : '0.875rem',
-              minWidth: isMobile ? 80 : 110,
-              height: isMobile ? 36 : 44,
-              outline: 'none'
+              fontSize: isMobile ? '0.85rem' : '0.875rem',
+              minWidth: isMobile ? '100%' : 110,
+              width: isMobile ? '100%' : 'auto',
+              height: isMobile ? 40 : 44,
+              outline: 'none',
+              boxSizing: 'border-box'
             }}
           >
             <option value="all">전체 국가</option>
             <option value="remittance">송금 가능 국가</option>
           </select>
         </div>
-        <div style={{ minWidth: isMobile ? 290 : 300, maxWidth: isMobile ? 380 : 400, flex: 1 }}>
+        <div style={{ 
+          width: isMobile ? '100%' : 'auto',
+          minWidth: isMobile ? '100%' : '300px', 
+          maxWidth: isMobile ? '100%' : '400px', 
+          flex: isMobile ? 'none' : 1 
+        }}>
           <Select
             options={searchOptions}
             value={selectedSearchOption}
             onChange={(opt) => setSearch(opt?.value || '')}
             isSearchable
-            placeholder="국가/통화명/통화로 검색"
+            placeholder={isMobile ? "국가/통화 검색" : "국가/통화명/통화로 검색"}
             isClearable
             noOptionsMessage={() => '검색 결과가 없습니다.'}
             styles={{
               control: (base) => ({
                 ...base,
-                minHeight: isMobile ? 32 : 44,
+                minHeight: isMobile ? 40 : 44,
+                height: isMobile ? 40 : 44,
                 borderRadius: '8px',
                 border: 'none',
                 background: '#fff',
-                fontSize: isMobile ? '0.75rem' : '1rem',
+                fontSize: isMobile ? '0.85rem' : '1rem',
                 fontWeight: 500,
                 boxShadow: 'none',
-                padding: isMobile ? '0 0.3rem' : undefined,
+                padding: isMobile ? '0 0.4rem' : undefined,
+                width: '100%'
               }),
               menu: (base) => ({ ...base, zIndex: 10 }),
               menuPortal: base => ({ ...base, zIndex: 9999 }),
@@ -281,23 +293,23 @@ export function ExchangeRates({ user }: { user: User | null }) {
                 color: state.isSelected ? '#2563eb' : '#222',
                 background: state.isSelected ? '#e0e7ef' : '#fff',
                 fontWeight: state.isSelected ? 700 : 500,
-                fontSize: isMobile ? '0.75rem' : '1rem',
-                padding: isMobile ? '6px 8px' : '8px 12px',
+                fontSize: isMobile ? '0.85rem' : '1rem',
+                padding: isMobile ? '8px 12px' : '8px 12px',
               }),
               singleValue: (base) => ({
                 ...base,
-                fontSize: isMobile ? '0.75rem' : '1rem',
+                fontSize: isMobile ? '0.85rem' : '1rem',
                 fontWeight: 500,
                 color: '#1e293b'
               }),
               placeholder: (base) => ({
                 ...base,
-                fontSize: isMobile ? '0.75rem' : '1rem',
+                fontSize: isMobile ? '0.85rem' : '1rem',
                 color: '#94a3b8'
               }),
               input: (base) => ({
                 ...base,
-                fontSize: isMobile ? '0.75rem' : '1rem',
+                fontSize: isMobile ? '0.85rem' : '1rem',
               }),
             }}
             menuPortalTarget={typeof window !== 'undefined' ? document.body : undefined}

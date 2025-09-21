@@ -24,9 +24,11 @@ export interface RemittanceFormData {
 interface RemittanceFormProps {
   onSubmit?: (data: RemittanceFormData) => void;
   refreshKey?: number;
+  onRefresh?: () => void;
+  isSmallScreen?: boolean;
 }
 
-function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
+function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = false }: RemittanceFormProps) {
   const [remittanceCountries] = useAtom(remittanceCountriesAtom);
   const getRemitCountries = useSetAtom(getRemittanceCountries);
   const [exchangeRates] = useAtom(exchangeRatesAtom);
@@ -65,6 +67,16 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   const [isAccountBtnHover, setIsAccountBtnHover] = useState(false);
   const [isSimBtnHover, setIsSimBtnHover] = useState(false);
   const [isSubmitBtnHover, setIsSubmitBtnHover] = useState(false);
+  
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // 동적 은행 상태 관리
   const senderBanks = (useAtomValue(banksAtom('KRW') as any) || []) as any[];
@@ -291,38 +303,38 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       icon: 'question',
       title: '송금하기',
       html: `
-        <div style="text-align: center; margin: 20px 0;">
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 1.1rem;">
-                <span style="font-size: 1.2rem;">💸</span>
+        <div style="text-align: center; margin: 15px 0;">
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="display: flex; align-items: center; gap: 4px; color: #64748b; font-size: 0.9rem;">
+                <span style="font-size: 1rem;">💸</span>
                 <span>이체 금액</span>
               </span>
-              <span style="font-weight: 600; font-size: 1.2rem; color: #222;">${cleanAmount ? cleanAmount.toLocaleString() : 0}원</span>
+              <span style="font-weight: 600; font-size: 1rem; color: #222;">${cleanAmount ? cleanAmount.toLocaleString() : 0}원</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 1.1rem;">
-                <span style="font-size: 1.2rem;">🪙</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="display: flex; align-items: center; gap: 4px; color: #64748b; font-size: 0.9rem;">
+                <span style="font-size: 1rem;">🏷️</span>
                 <span>수수료 (1%)</span>
               </span>
-              <span style="font-weight: 600; font-size: 1.2rem; color: #222;">${fee ? fee.toLocaleString() : 0}원</span>
+              <span style="font-weight: 600; font-size: 1rem; color: #222;">${fee ? fee.toLocaleString() : 0}원</span>
             </div>
-            <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-bottom: 12px;"></div>
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 8px; margin-bottom: 8px;"></div>
             ${convertedAmount > 0 && form.currency ? `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="display: flex; align-items: center; gap: 6px; color: #059669; font-size: 1.1rem;">
-                <span style="font-size: 1.2rem;">💱</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="display: flex; align-items: center; gap: 4px; color: #059669; font-size: 0.9rem;">
+                <span style="font-size: 1rem;">💱</span>
                 <span>변환 금액</span>
               </span>
-              <span style="font-weight: 600; font-size: 1.2rem; color: #059669;">${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${getCurrencyDisplayName(form.currency)}</span>
+              <span style="font-weight: 600; font-size: 1rem; color: #059669;">${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${getCurrencyDisplayName(form.currency)}</span>
             </div>
             ` : ''}
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 1.1rem;">
-                <span style="font-size: 1.3rem;">💰</span>
+              <span style="display: flex; align-items: center; gap: 4px; color: #64748b; font-size: 0.95rem;">
+                <span style="font-size: 1.1rem;">💰</span>
                 <span>총 출금액</span>
               </span>
-              <span style="font-weight: 700; font-size: 1.4rem; color: #3b82f6;">${total ? total.toLocaleString() : 0}원</span>
+              <span style="font-weight: 700; font-size: 1.1rem; color: #3b82f6;">${total ? total.toLocaleString() : 0}원</span>
             </div>
           </div>
         </div>
@@ -528,15 +540,15 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
     fontWeight: 600,
     marginBottom: 6,
     color: '#2563eb',
-    fontSize: '1rem',
+    fontSize: isMobile ? '0.9rem' : '1rem',
   };
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '0.5rem 0.8rem',
+    padding: isMobile ? '0.45rem 0.7rem' : '0.5rem 0.8rem',
     border: '1.5px solid #d1d5db',
-    borderRadius: 8,
-    fontSize: '1rem',
+    borderRadius: isMobile ? 6 : 8,
+    fontSize: isMobile ? '0.9rem' : '1rem',
     marginBottom: 1,
     outline: 'none',
     transition: 'border 0.2s',
@@ -548,10 +560,14 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
       : 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
     color: '#fff',
     border: 'none',
-    borderRadius: compact ? 10 : 18,
-    padding: compact ? '0.48rem 1.1rem' : '0.95rem 2.1rem',
+    borderRadius: compact ? (isMobile ? 8 : 10) : (isMobile ? 12 : 18),
+    padding: compact 
+      ? (isMobile ? '0.4rem 0.9rem' : '0.48rem 1.1rem')
+      : (isMobile ? '0.7rem 1.5rem' : '0.95rem 2.1rem'),
     fontWeight: 800,
-    fontSize: compact ? '1.01rem' : '1.15rem',
+    fontSize: compact 
+      ? (isMobile ? '0.9rem' : '1.01rem') 
+      : (isMobile ? '1.05rem' : '1.15rem'),
     cursor: 'pointer',
     boxShadow: isHover
       ? '0 6px 24px 0 rgba(60, 130, 246, 0.22)'
@@ -577,7 +593,11 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
   return (
     <>
       {/* 송금 한도 표시 */}
-      <RemittanceLimitDisplay refreshKey={refreshKey} />
+      <RemittanceLimitDisplay 
+        refreshKey={refreshKey} 
+        onRefresh={onRefresh}
+        isSmallScreen={isSmallScreen}
+      />
       
       {/* 내 은행/계좌 등록/수정 버튼 */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: 8 }}>
@@ -702,7 +722,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
         <div style={{
           background: 'linear-gradient(135deg, #f6fbff 0%, #eaf3fa 100%)',
           borderRadius: 16,
-          padding: '1.1rem 1.2rem 1.2rem 1.2rem',
+          padding: isMobile ? '0.5rem 0.6rem 0.6rem 0.6rem' : '1.1rem 1.2rem 1.2rem 1.2rem',
           margin: '0.7rem 0 0.3rem 0',
           border: '1.5px solid #e0e7ef',
           fontSize: '1.08rem',
@@ -710,38 +730,38 @@ function RemittanceForm({ onSubmit, refreshKey = 0 }: RemittanceFormProps) {
           lineHeight: 1.7,
           boxShadow: '0 4px 16px 0 rgba(59,130,246,0.09)',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.3rem' : '0.5rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ fontSize: '1.1rem' }}>💸</span>
-              <span>이체 금액</span>
+              <span style={{ fontSize: isMobile ? '0.9rem' : '1.3rem' }}>💸</span>
+              <span style={{ fontSize: isMobile ? '0.8rem' : '1.1rem', fontWeight: 600 }}>이체 금액</span>
             </span>
-            <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>{cleanAmount ? cleanAmount.toLocaleString() : 0}원</span>
+            <span style={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1.3rem' }}>{cleanAmount ? cleanAmount.toLocaleString() : 0}원</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.3rem' : '0.5rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ fontSize: '1.1rem' }}>🏷️</span>
-              <span>수수료 (1%)</span>
+              <span style={{ fontSize: isMobile ? '0.9rem' : '1.3rem' }}>🏷️</span>
+              <span style={{ fontSize: isMobile ? '0.8rem' : '1.1rem', fontWeight: 600 }}>수수료 (1%)</span>
             </span>
-            <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>{fee.toLocaleString()}원</span>
+            <span style={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1.3rem' }}>{fee.toLocaleString()}원</span>
           </div>
           <div style={{ borderTop: '1.5px solid #dbeafe', margin: '0.7rem 0', paddingTop: '0.7rem' }}></div>
           {cleanAmount > 0 && selectedCurrency?.value && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.3rem' : '0.5rem' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: '1.1rem' }}>💱</span>
-                <span style={{ color: '#059669', fontWeight: 600 }}>변환 금액</span>
+                <span style={{ fontSize: isMobile ? '0.9rem' : '1.3rem' }}>💱</span>
+                <span style={{ color: '#059669', fontWeight: 600, fontSize: isMobile ? '0.8rem' : '1.1rem' }}>변환 금액</span>
               </span>
-              <span style={{ fontWeight: 700, fontSize: '1rem', color: '#059669' }}>
+              <span style={{ fontWeight: 700, fontSize: isMobile ? '0.8rem' : '1.2rem', color: '#059669' }}>
                 {getConvertedAmount(cleanAmount, selectedCurrency.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {getCurrencyDisplayName(selectedCurrency.value)}
               </span>
             </div>
           )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.3rem' : '0.5rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ fontSize: '1.2rem' }}>💰</span>
-              <span style={{ color: '#64748b', fontWeight: 600, fontSize: '1.08rem', letterSpacing: '0.01em' }}>총 출금액</span>
+              <span style={{ fontSize: isMobile ? '0.9rem' : '1.4rem' }}>💰</span>
+              <span style={{ color: '#64748b', fontWeight: 600, fontSize: isMobile ? '0.85rem' : '1.2rem', letterSpacing: '0.01em' }}>총 출금액</span>
             </span>
-            <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#3b82f6' }}>{total ? total.toLocaleString() : 0}원</span>
+            <span style={{ fontWeight: 800, fontSize: isMobile ? '0.9rem' : '1.4rem', color: '#3b82f6' }}>{total ? total.toLocaleString() : 0}원</span>
           </div>
         </div>
         <button type="submit" style={modernBtnStyle(isSubmitBtnHover)} onMouseEnter={() => setIsSubmitBtnHover(true)} onMouseLeave={() => setIsSubmitBtnHover(false)}>송금하기</button>

@@ -55,9 +55,14 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
   const [selected, setSelected] = useState<Remittance | null>(null);
   const [countries] = useAtom(remittanceCountriesAtom);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -75,6 +80,14 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
+  };
+
+  // 받는 사람 이름 처리 (모바일에서 10자 제한)
+  const formatReceiverName = (name: string) => {
+    if (isMobile && name.length > 10) {
+      return truncateText(name, 10);
+    }
+    return name;
   };
 
   // 수취통화 텍스트 처리 (12글자 이상시 ... 처리)
@@ -125,15 +138,30 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
             <tr style={{ 
               background: '#fff', 
               color: '#374151',
-              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              fontSize: isSmallMobile ? '0.65rem' : isMobile ? '0.7rem' : '0.875rem',
               fontWeight: 600,
               borderBottom: '2px solid #e2e8f0'
             }}>
-              <th style={{ padding: isMobile ? '0.5rem' : '1rem', textAlign: 'left' }}>받는 사람</th>
-              <th style={{ padding: isMobile ? '0.5rem' : '1rem', textAlign: 'left' }}>수취 통화</th>
-              <th style={{ padding: isMobile ? '0.5rem' : '1rem', textAlign: 'right' }}>금액(원)</th>
-              <th style={{ padding: isMobile ? '0.5rem' : '1rem', textAlign: 'center' }}>상태</th>
-              <th style={{ padding: isMobile ? '0.5rem' : '1rem', textAlign: 'center' }}>송금일</th>
+              <th style={{ 
+                padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
+                textAlign: 'left' 
+              }}>받는 사람</th>
+              <th style={{ 
+                padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
+                textAlign: 'left' 
+              }}>수취 통화</th>
+              <th style={{ 
+                padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
+                textAlign: 'right' 
+              }}>금액(원)</th>
+              <th style={{ 
+                padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
+                textAlign: 'center' 
+              }}>상태</th>
+              <th style={{ 
+                padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
+                textAlign: 'center' 
+              }}>송금일</th>
             </tr>
           </thead>
           <tbody>
@@ -155,7 +183,7 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                   onClick={() => handleRemittanceClick(r)}
                   style={{ 
                     borderBottom: '1px solid #e5e7eb',
-                    fontSize: isMobile ? '0.75rem' : '0.875rem',
+                    fontSize: isSmallMobile ? '0.65rem' : isMobile ? '0.7rem' : '0.875rem',
                     transition: 'background-color 0.2s',
                     cursor: 'pointer'
                   }}
@@ -168,16 +196,17 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                 >
                   <td 
                     style={{ 
-                      padding: isMobile ? '0.5rem' : '1rem', 
+                      padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
                       textAlign: 'left',
                       fontWeight: 600,
                       color: '#1e293b'
                     }}
+                    title={isMobile && r.receiverName.length > 10 ? r.receiverName : undefined}
                   >
-                    {isMobile ? truncateText(r.receiverName, 6) : r.receiverName}
+                    {formatReceiverName(r.receiverName)}
                 </td>
                   <td style={{ 
-                    padding: isMobile ? '0.5rem' : '1rem', 
+                    padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
                     textAlign: 'left',
                     fontWeight: 600,
                     color: '#1e293b'
@@ -187,7 +216,7 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                   {formatCurrencyLabelForDisplay(r.currency)}
                 </td>
                   <td style={{ 
-                    padding: isMobile ? '0.5rem' : '1rem', 
+                    padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
                     textAlign: 'right',
                     fontWeight: 600,
                     color: '#1e293b'
@@ -195,7 +224,7 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                     {r.amount.toLocaleString()}
                   </td>
                   <td style={{ 
-                    padding: isMobile ? '0.5rem' : '1rem', 
+                    padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
                     textAlign: 'center',
                     fontWeight: 500,
                     color: getStatusColor(r.status)
@@ -203,7 +232,7 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                     {getStatusText(r.status)}
                   </td>
                   <td style={{ 
-                    padding: isMobile ? '0.5rem' : '1rem', 
+                    padding: isSmallMobile ? '0.375rem 0.25rem' : isMobile ? '0.4rem 0.375rem' : '1rem', 
                     textAlign: 'center',
                     color: '#64748b'
                   }}>

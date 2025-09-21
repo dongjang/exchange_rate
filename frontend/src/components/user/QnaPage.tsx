@@ -240,9 +240,14 @@ const QnaPage: React.FC = () => {
 
   // 반응형 감지
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 400);
+    };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -253,7 +258,7 @@ const QnaPage: React.FC = () => {
     {
       key: 'title',
       label: '제목',
-      width: isMobile ? '4.5fr' : '4fr',
+      width: isSmallMobile ? '2fr' : isMobile ? '4fr' : '4fr',
       render: (qna: Qna) => (
         <div style={{
           fontWeight: '500',
@@ -269,69 +274,80 @@ const QnaPage: React.FC = () => {
     {
       key: 'status',
       label: '상태',
-      width: '1fr',
+      width: isSmallMobile ? '1fr' : '1fr',
       align: 'center' as const,
       render: (qna: Qna) => (
         <span style={{
-          padding: isMobile ? '3px 8px' : '4px 12px',
+          padding: isSmallMobile ? '2px 6px' : isMobile ? '3px 8px' : '4px 12px',
           borderRadius: '20px',
-          fontSize: isMobile ? '10px' : '12px',
+          fontSize: isSmallMobile ? '10px' : isMobile ? '10px' : '12px',
           fontWeight: '600',
           backgroundColor: getStatusColor(qna.status) + '20',
-          color: getStatusColor(qna.status)
+          color: getStatusColor(qna.status),
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+          minWidth: 'fit-content'
         }}>
-          {isMobile ? (getStatusLabel(qna.status) === '대기중' ? '대기' : '완료') : getStatusLabel(qna.status)}
+          {isSmallMobile ? (getStatusLabel(qna.status) === '대기중' ? '대기' : '완료') :
+           isMobile ? (getStatusLabel(qna.status) === '대기중' ? '대기' : '완료') : 
+           getStatusLabel(qna.status)}
         </span>
       )
     },
     {
       key: 'fileName',
-      label: '첨부파일',
-      width: '1fr',
+      label: isSmallMobile ? '파일' : '첨부파일',
+      width: isSmallMobile ? '0.8fr' : '1fr',
       align: 'center' as const,
       render: (qna: Qna) => (
         qna.fileName ? (
           <span style={{
-            padding: isMobile ? '3px 6px' : '4px 8px',
+            padding: isSmallMobile ? '2px 4px' : isMobile ? '3px 6px' : '4px 8px',
             borderRadius: '12px',
-            fontSize: isMobile ? '9px' : '11px',
+            fontSize: isSmallMobile ? '8px' : isMobile ? '9px' : '11px',
             fontWeight: '600',
             backgroundColor: '#10b981',
             color: 'white',
             display: 'inline-block'
           }}>
-            첨부파일
+            {isSmallMobile ? '✓' : '첨부파일'}
           </span>
         ) : (
           <span style={{
-            padding: isMobile ? '3px 6px' : '4px 8px',
+            padding: isSmallMobile ? '2px 4px' : isMobile ? '3px 6px' : '4px 8px',
             borderRadius: '12px',
-            fontSize: isMobile ? '9px' : '11px',
+            fontSize: isSmallMobile ? '8px' : isMobile ? '9px' : '11px',
             fontWeight: '600',
             backgroundColor: '#e5e7eb',
             color: '#6b7280',
             display: 'inline-block'
           }}>
-            {isMobile ? '없음' : '없음'}
+            {isSmallMobile ? '✗' : '없음'}
           </span>
         )
       )
     },
     {
       key: 'createdAt',
-      label: '등록일',
-      width: isMobile ? '1.5fr' : '1fr',
+      label: isSmallMobile ? '날짜' : '등록일',
+      width: isSmallMobile ? '1fr' : isMobile ? '1.5fr' : '1fr',
       align: 'center' as const,
       render: (qna: Qna) => (
         <div style={{ 
-          fontSize: isMobile ? '11px' : '14px', 
+          fontSize: isSmallMobile ? '9px' : isMobile ? '11px' : '14px', 
           color: '#64748b' 
         }}>
-          {new Date(qna.createdAt).toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-          })}
+          {isSmallMobile ? 
+            new Date(qna.createdAt).toLocaleDateString('ko-KR', {
+              month: '2-digit',
+              day: '2-digit'
+            }) :
+            new Date(qna.createdAt).toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            })
+          }
         </div>
       )
     }

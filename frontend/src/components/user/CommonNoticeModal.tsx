@@ -31,6 +31,19 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
   onHideToday
 }) => {
   const [hideToday, setHideToday] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   if (!isOpen || !notice) return null;
 
@@ -85,24 +98,29 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 1000,
-      backdropFilter: 'blur(4px)'
+      backdropFilter: 'blur(4px)',
+      padding: isMobile ? '1rem 0.5rem' : '0',
+      boxSizing: 'border-box',
+      overflowY: 'auto'
     }} onClick={onClose}>
       <div style={{
         background: 'white',
-        borderRadius: '20px',
-        maxWidth: '600px',
-        width: '90%',
-        maxHeight: '80vh',
+        borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
+        maxWidth: isSmallMobile ? '95vw' : isMobile ? '90vw' : '600px',
+        width: '100%',
+        maxHeight: isMobile ? '90vh' : '80vh',
         overflow: 'hidden',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         animation: 'modalSlideIn 0.3s ease-out',
-        border: '2px solid #e2e8f0' // 테두리 추가
+        border: '2px solid #e2e8f0',
+        marginTop: isMobile ? '1rem' : '0',
+        marginBottom: isMobile ? '1rem' : '0'
       }} onClick={(e) => e.stopPropagation()}>
         
         {/* 헤더 */}
         <div style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          padding: '24px 32px',
+          padding: isSmallMobile ? '16px 20px' : isMobile ? '20px 24px' : '24px 32px',
           color: 'white',
           position: 'relative',
           overflow: 'hidden'
@@ -126,18 +144,18 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px'
+              gap: isSmallMobile ? '8px' : isMobile ? '10px' : '12px'
             }}>
               <div style={{
-                fontSize: '24px',
+                fontSize: isSmallMobile ? '18px' : isMobile ? '20px' : '24px',
                 fontWeight: 'bold'
               }}>
                 📢
               </div>
-                             <div>
+              <div>
                  <h2 style={{
                    margin: 0,
-                   fontSize: '20px',
+                   fontSize: isSmallMobile ? '14px' : isMobile ? '16px' : '20px',
                    fontWeight: '700',
                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                  }}>
@@ -151,14 +169,14 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
                 background: 'rgba(255, 255, 255, 0.2)',
                 border: 'none',
                 borderRadius: '50%',
-                width: '32px',
-                height: '32px',
+                width: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
+                height: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
                 transition: 'background-color 0.2s ease'
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'}
@@ -171,19 +189,19 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
 
         {/* 내용 */}
         <div style={{
-          padding: '32px',
+          padding: isSmallMobile ? '16px 20px' : isMobile ? '20px 24px' : '32px',
           maxHeight: '60vh',
           overflowY: 'auto'
         }}>
           {/* 제목 */}
           <div style={{
-            marginBottom: '24px',
-            paddingBottom: '16px',
+            marginBottom: isSmallMobile ? '16px' : isMobile ? '20px' : '24px',
+            paddingBottom: isSmallMobile ? '12px' : isMobile ? '14px' : '16px',
             borderBottom: '2px solid #f1f5f9'
           }}>
             <h3 style={{
               margin: 0,
-              fontSize: '18px',
+              fontSize: isSmallMobile ? '14px' : isMobile ? '16px' : '18px',
               fontWeight: '600',
               color: '#1e293b',
               lineHeight: '1.4'
@@ -194,11 +212,11 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
 
           {/* 공지 내용 */}
           <div style={{
-            marginBottom: '24px'
+            marginBottom: isSmallMobile ? '16px' : isMobile ? '20px' : '24px'
           }}>
             <h4 style={{
               margin: '0 0 12px 0',
-              fontSize: '14px',
+              fontSize: isSmallMobile ? '11px' : isMobile ? '12px' : '14px',
               fontWeight: '600',
               color: '#64748b',
               textTransform: 'uppercase',
@@ -207,11 +225,11 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
               공지 내용
             </h4>
             <div style={{
-              padding: '16px',
+              padding: isSmallMobile ? '12px' : isMobile ? '14px' : '16px',
               backgroundColor: '#f8fafc',
-              borderRadius: '12px',
+              borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
               border: '1px solid #e2e8f0',
-              fontSize: '14px',
+              fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '14px',
               lineHeight: '1.6',
               color: '#374151',
               whiteSpace: 'pre-wrap'

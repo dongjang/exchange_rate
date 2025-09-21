@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { remittanceCountriesAtom } from '../../store/countryStore';
 
@@ -33,12 +33,26 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
   remittance
 }) => {
   const [countries] = useAtom(remittanceCountriesAtom);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   if (!isOpen || !remittance) return null;
 
   const formatCurrencyLabel = (code: string) => {
     const country = countries?.find(c => c.code === code);
     if (country) {
+      // 모든 화면에서 동일한 형식으로 표시
       return `${country.countryName} - ${country.codeName} (${country.code})`;
     }
     return code;
@@ -46,12 +60,27 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    if (isSmallMobile) {
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${month}월 ${day}일 ${hours}:${minutes}`;
+    } else if (isMobile) {
+      const year = date.getFullYear().toString().slice(-2);
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    } else {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    }
   };
 
   const formatAmount = (amount: number) => {
@@ -95,45 +124,76 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
       zIndex: 9999, 
       display: 'flex', 
       alignItems: 'center', 
-      justifyContent: 'center' 
+      justifyContent: 'center',
+      padding: isMobile ? '1rem 0.5rem' : '0',
+      boxSizing: 'border-box',
+      overflowY: 'auto'
     }} onClick={onClose}>
       <div style={{ 
         background: '#fff', 
-        borderRadius: 16, 
-        boxShadow: '0 4px 24px rgba(30,41,59,0.13)', 
-        minWidth: 320, 
-        maxWidth: 400, 
+        borderRadius: isSmallMobile ? 8 : isMobile ? 12 : 16, 
+        boxShadow: isSmallMobile ? '0 2px 12px rgba(30,41,59,0.1)' : isMobile ? '0 3px 18px rgba(30,41,59,0.12)' : '0 4px 24px rgba(30,41,59,0.13)', 
+        minWidth: isSmallMobile ? 280 : isMobile ? 300 : 320, 
+        maxWidth: isSmallMobile ? '95vw' : isMobile ? '90vw' : 400, 
         width: '100%', 
-        padding: '2.2rem 2rem 1.5rem 2rem', 
-        position: 'relative' 
+        padding: isSmallMobile ? '1rem 0.8rem 0.8rem 0.8rem' : isMobile ? '1.4rem 1.2rem 1rem 1.2rem' : '2.2rem 2rem 1.5rem 2rem', 
+        position: 'relative',
+        marginTop: isMobile ? '1rem' : '0',
+        marginBottom: isMobile ? '1rem' : '0',
+        maxHeight: isMobile ? '90vh' : 'auto',
+        overflowY: isMobile ? 'auto' : 'visible'
       }} onClick={e => e.stopPropagation()}>
         <button onClick={onClose} style={{ 
           position: 'absolute', 
-          top: 18, 
-          right: 18, 
+          top: isSmallMobile ? 12 : isMobile ? 15 : 18, 
+          right: isSmallMobile ? 12 : isMobile ? 15 : 18, 
           background: 'none', 
           border: 'none', 
-          fontSize: '1.5rem', 
+          fontSize: isSmallMobile ? '1.2rem' : isMobile ? '1.3rem' : '1.5rem', 
           color: '#888', 
           cursor: 'pointer' 
         }} aria-label="닫기">×</button>
         
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', color: '#1e293b', textAlign: 'center' }}>송금 상세</h3>
+        <h3 style={{ 
+          fontSize: isSmallMobile ? '0.9rem' : isMobile ? '1rem' : '1.25rem', 
+          fontWeight: 700, 
+          marginBottom: isSmallMobile ? '1rem' : isMobile ? '1.2rem' : '1.5rem', 
+          color: '#1e293b', 
+          textAlign: 'center' 
+        }}>송금 상세</h3>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', fontSize: '1rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: isSmallMobile ? '1rem' : isMobile ? '1.3rem' : '1.8rem', 
+          fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem' 
+        }}>
           {/* 받는 사람 */}
           <div>
-            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#374151', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.1rem' }}>👥</span>
+            <h4 style={{ 
+              fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.85rem' : '0.95rem', 
+              fontWeight: 600, 
+              color: '#374151', 
+              marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem' 
+            }}>
+              <span style={{ fontSize: isSmallMobile ? '0.9rem' : isMobile ? '1rem' : '1.1rem' }}>👥</span>
               받는 사람
             </h4>
             <div style={{ 
               background: '#f8fafc', 
-              padding: '1.2rem', 
-              borderRadius: 10,
+              padding: isSmallMobile ? '0.8rem' : isMobile ? '1rem' : '1.2rem', 
+              borderRadius: isSmallMobile ? 6 : isMobile ? 8 : 10,
               border: '1px solid #e2e8f0'
             }}>
-              <div style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div style={{ 
+                fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: isSmallMobile ? '0.4rem' : isMobile ? '0.5rem' : '0.6rem' 
+              }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>이름</span>
                   <span style={{ color: '#1e293b', fontWeight: 600 }}>{remittance.receiverName}</span>
@@ -158,17 +218,30 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
 
           {/* 보내는 사람 */}
           <div>
-            <h4 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#374151', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.1rem' }}>👤</span>
+            <h4 style={{ 
+              fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.85rem' : '0.95rem', 
+              fontWeight: 600, 
+              color: '#374151', 
+              marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem' 
+            }}>
+              <span style={{ fontSize: isSmallMobile ? '0.9rem' : isMobile ? '1rem' : '1.1rem' }}>👤</span>
               보내는 사람
             </h4>
             <div style={{ 
               background: '#f8fafc', 
-              padding: '1.2rem', 
-              borderRadius: 10,
+              padding: isSmallMobile ? '0.8rem' : isMobile ? '1rem' : '1.2rem', 
+              borderRadius: isSmallMobile ? 6 : isMobile ? 8 : 10,
               border: '1px solid #e2e8f0'
             }}>
-              <div style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div style={{ 
+                fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: isSmallMobile ? '0.4rem' : isMobile ? '0.5rem' : '0.6rem' 
+              }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280', fontWeight: 500 }}>은행</span>
                   <span style={{ color: '#1e293b', fontWeight: 600 }}>
@@ -187,40 +260,88 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
           <div style={{ 
             background: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%)',
             border: '1px solid #e2e8f0',
-            borderRadius: 12,
-            padding: '1.5rem',
+            borderRadius: isSmallMobile ? 6 : isMobile ? 8 : 12,
+            padding: isSmallMobile ? '0.8rem' : isMobile ? '1rem' : '1.5rem',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-              <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>송금 금액</span>
-              <span style={{ fontWeight: 700, fontSize: '1.4rem', color: '#1e293b' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem' 
+            }}>
+              <span style={{ 
+                color: '#64748b', 
+                fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                fontWeight: 500 
+              }}>송금 금액</span>
+              <span style={{ 
+                fontWeight: 700, 
+                fontSize: isSmallMobile ? '1rem' : isMobile ? '1.2rem' : '1.4rem', 
+                color: '#1e293b' 
+              }}>
                 {formatAmount(remittance.amount)}원
               </span>
             </div>
             {remittance.exchangeRate && remittance.convertedAmount && (
               <>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                  <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>환율</span>
-                  <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1e293b' }}>
-                    1 {formatCurrencyLabel(remittance.currency).split(' - ')[1]} = {remittance.exchangeRate.toLocaleString()}원
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem' 
+                }}>
+                  <span style={{ 
+                    color: '#64748b', 
+                    fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                    fontWeight: 500 
+                  }}>환율</span>
+                  <span style={{ 
+                    fontWeight: 600, 
+                    fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem', 
+                    color: '#1e293b' 
+                  }}>
+                    1 {formatCurrencyLabel(remittance.currency).split(' - ')[1]?.split(' (')[0] || remittance.currency} = {remittance.exchangeRate.toLocaleString()}원
                   </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                  <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>변환 금액</span>
-                  <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1e293b' }}>
-                    {remittance.convertedAmount.toLocaleString()} {formatCurrencyLabel(remittance.currency).split(' - ')[1]}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem' 
+                }}>
+                  <span style={{ 
+                    color: '#64748b', 
+                    fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                    fontWeight: 500 
+                  }}>변환 금액</span>
+                  <span style={{ 
+                    fontWeight: 600, 
+                    fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem', 
+                    color: '#1e293b' 
+                  }}>
+                    {remittance.convertedAmount.toLocaleString()} {formatCurrencyLabel(remittance.currency).split(' - ')[1]?.split(' (')[0] || remittance.currency}
                   </span>
                 </div>
               </>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-              <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>상태</span>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem' 
+            }}>
+              <span style={{ 
+                color: '#64748b', 
+                fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem', 
+                fontWeight: 500 
+              }}>상태</span>
               <span style={{ 
                 fontWeight: 600, 
                 color: getStatusColor(remittance.status),
-                padding: '0.3rem 0.8rem',
-                borderRadius: 6,
-                fontSize: '0.85rem',
+                padding: isSmallMobile ? '0.2rem 0.5rem' : isMobile ? '0.25rem 0.6rem' : '0.3rem 0.8rem',
+                borderRadius: isSmallMobile ? 4 : isMobile ? 5 : 6,
+                fontSize: isSmallMobile ? '0.7rem' : isMobile ? '0.75rem' : '0.85rem',
                 background: getStatusColor(remittance.status) === '#10b981' ? '#ecfdf5' : 
                            getStatusColor(remittance.status) === '#f59e0b' ? '#fffbeb' : '#fef2f2'
               }}>
@@ -231,15 +352,28 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
               <div style={{ 
                 background: '#fef2f2', 
                 border: '1px solid #fecaca', 
-                borderRadius: 8, 
-                padding: '0.8rem', 
-                marginTop: '0.8rem' 
+                borderRadius: isSmallMobile ? 4 : isMobile ? 6 : 8, 
+                padding: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem', 
+                marginTop: isSmallMobile ? '0.5rem' : isMobile ? '0.6rem' : '0.8rem' 
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '1rem' }}>⚠️</span>
-                  <span style={{ color: '#dc2626', fontSize: '0.85rem', fontWeight: 600 }}>실패 사유</span>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  marginBottom: isSmallMobile ? '0.3rem' : isMobile ? '0.35rem' : '0.4rem' 
+                }}>
+                  <span style={{ fontSize: isSmallMobile ? '0.8rem' : isMobile ? '0.9rem' : '1rem' }}>⚠️</span>
+                  <span style={{ 
+                    color: '#dc2626', 
+                    fontSize: isSmallMobile ? '0.7rem' : isMobile ? '0.75rem' : '0.85rem', 
+                    fontWeight: 600 
+                  }}>실패 사유</span>
                 </div>
-                <div style={{ color: '#991b1b', fontSize: '0.8rem', lineHeight: 1.4 }}>
+                <div style={{ 
+                  color: '#991b1b', 
+                  fontSize: isSmallMobile ? '0.65rem' : isMobile ? '0.7rem' : '0.8rem', 
+                  lineHeight: 1.4 
+                }}>
                   {remittance.failureReason}
                 </div>
               </div>
@@ -248,11 +382,15 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
           {/* 날짜 정보 */}
           <div style={{ 
             borderTop: '1px solid #e5e7eb', 
-            paddingTop: '1rem',
+            paddingTop: isSmallMobile ? '0.6rem' : isMobile ? '0.8rem' : '1rem',
             textAlign: 'center',
-            marginBottom: '1rem'
+            marginBottom: isSmallMobile ? '0.6rem' : isMobile ? '0.8rem' : '1rem'
           }}>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 500 }}>
+            <div style={{ 
+              fontSize: isSmallMobile ? '0.65rem' : isMobile ? '0.7rem' : '0.8rem', 
+              color: '#9ca3af', 
+              fontWeight: 500 
+            }}>
               송금일: {formatDate(remittance.createdAt)}
             </div>
           </div>
@@ -265,14 +403,14 @@ const RemittanceDetailModal: React.FC<RemittanceDetailModalProps> = ({
                 background: '#3b82f6',
                 color: 'white',
                 border: 'none',
-                padding: '0.75rem 4rem',
-                borderRadius: '8px',
-                fontSize: '0.9rem',
+                padding: isSmallMobile ? '0.5rem 2rem' : isMobile ? '0.6rem 3rem' : '0.75rem 4rem',
+                borderRadius: isSmallMobile ? '6px' : isMobile ? '7px' : '8px',
+                fontSize: isSmallMobile ? '0.75rem' : isMobile ? '0.8rem' : '0.9rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 boxShadow: '0 2px 4px rgba(59, 130, 246, 0.2)',
-                minWidth: '160px'
+                minWidth: isSmallMobile ? '120px' : isMobile ? '140px' : '160px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#2563eb';

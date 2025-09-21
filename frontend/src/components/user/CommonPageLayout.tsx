@@ -47,10 +47,25 @@ const CommonPageLayout: React.FC<CommonPageLayoutProps> = ({
   isLoading = false,
   children
 }) => {
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isSmallMobile, setIsSmallMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsSmallMobile(width <= 480);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <div style={{
-      maxWidth: '650px',
-      margin: '0.9rem auto 2.5rem'
+      maxWidth: isSmallMobile ? '100%' : isMobile ? '100%' : '650px',
+      margin: isSmallMobile ? '0' : isMobile ? '0' : '0.9rem auto 2.5rem',
+      padding: '0'
     }}>
       <CommonPageHeader
         title={title}

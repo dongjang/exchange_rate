@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
-import { FaChartLine, FaEdit, FaExclamationTriangle, FaEye } from 'react-icons/fa';
+import { FaChartLine, FaEdit, FaExclamationTriangle, FaEye, FaSync } from 'react-icons/fa';
 import { api } from '../../services/api';
 import { userInfoAtom } from '../../store/userStore';
 import './RemittanceLimitDisplay.css';
@@ -33,9 +33,11 @@ interface RemittanceLimitRequest {
 
 interface RemittanceLimitDisplayProps {
   refreshKey?: number;
+  onRefresh?: () => void;
+  isSmallScreen?: boolean;
 }
 
-const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refreshKey = 0 }) => {
+const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refreshKey = 0, onRefresh, isSmallScreen = false }) => {
   const [userInfo] = useAtom(userInfoAtom);
   const [limit, setLimit] = useState<RemittanceLimit | null>(null);
   const [pendingRequest, setPendingRequest] = useState<RemittanceLimitRequest | null>(null);
@@ -44,6 +46,14 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
   const [error, setError] = useState<string | null>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [internalMobile, setInternalMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setInternalMobile(window.innerWidth <= 450);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const fetchLimitData = async (showLoading = true) => {
     
@@ -145,23 +155,41 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
     <>
       <div className="remittance-limit-container">
         <div className="remittance-limit-header">
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div className="remittance-limit-icon">
-              <FaChartLine style={{ color: 'white', fontSize: '16px' }} />
-            </div>
-            <div>
-              <h3 className="remittance-limit-title">
-                송금 한도 정보
-              </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span className="remittance-limit-badge">
-                  {limit.limitType === 'DEFAULT_LIMIT' ? '기본 한도 적용' : '개인 요청 한도 적용'}
-                </span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className="remittance-limit-icon">
+                <FaChartLine style={{ color: 'white', fontSize: '16px' }} />
+              </div>
+              <div>
+                <h3 className="remittance-limit-title">
+                  송금 한도 정보
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span className="remittance-limit-badge">
+                    {limit.limitType === 'DEFAULT_LIMIT' ? '기본 한도 적용' : '개인 요청 한도 적용'}
+                  </span>
+                </div>
               </div>
             </div>
+            
+            {/* 모바일일 때만 새로고침 버튼을 우측 끝에 배치 */}
+            {isSmallScreen && onRefresh && (
+              <button
+                onClick={onRefresh}
+                className="remittance-limit-refresh-btn"
+              >
+                <FaSync style={{ fontSize: '11px' }} />
+                새로고침
+              </button>
+            )}
           </div>
           
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>          
+          <div style={{ 
+            display: 'flex', 
+            gap: '8px', 
+            alignItems: 'center',
+            justifyContent: (isSmallScreen || internalMobile) ? 'flex-end' : 'center'
+          }}>          
             {/* 기본 한도 사용자이고 대기중인 요청이 없을 때만 신청 버튼 표시 */}
             {(limit.limitType === 'DEFAULT_LIMIT' && !pendingRequest) && (
               <button
@@ -176,36 +204,39 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
             {/* 개인 한도 사용자이거나 대기중인 요청이 있을 때 상세 버튼 표시 */}
             {(limit.limitType === 'USER_LIMIT' || pendingRequest) && (
               <>
-                <button
-                  onClick={() => setShowHistoryModal(true)}
-                  className="remittance-limit-status-btn"
-                >
-                  <FaEye style={{ fontSize: '12px' }} />
-                  한도 변경 신청 상세
-                </button>
-                             
-                {/* 승인된 사용자에게만 재신청 버튼 표시 */}
+                {/* 승인된 사용자에게만 재신청 버튼 표시 - 모바일에서 우측에 오도록 순서 변경 */}
                 {limit.limitType === 'USER_LIMIT' && !pendingRequest && (
                   <button
                     onClick={() => setShowLimitModal(true)}
                     className="remittance-limit-rerequest-btn"
+                    style={{ order: (isSmallScreen || internalMobile) ? 2 : 1 }}
                   >
                     <FaEdit style={{ fontSize: '12px' }} />
                     한도 재변경 신청
                   </button>
                 )}
+                
+                <button
+                  onClick={() => setShowHistoryModal(true)}
+                  className="remittance-limit-status-btn"
+                  style={{ order: (isSmallScreen || internalMobile) ? 1 : 2 }}
+                >
+                  <FaEye style={{ fontSize: '12px' }} />
+                  한도 변경 신청 상세
+                </button>
               </>
             )}
-                         {/* 새로고침 버튼 */}
-            <button
-              onClick={fetchData}
-              className="remittance-limit-refresh-btn"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M23 4v6h-6M1 20v-6h6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-              </svg>
-              새로고침
-            </button>
+          {/* PC에서 새로고침 버튼 - 항상 표시 */}
+           <button
+             onClick={onRefresh || (() => window.location.reload())}
+             className="remittance-limit-refresh-btn"
+             style={{
+               display: isSmallScreen ? 'none' : 'flex'
+             }}
+           >
+             <FaSync style={{ fontSize: '12px' }} />
+             새로고침
+           </button>
           </div>
         </div>
         
