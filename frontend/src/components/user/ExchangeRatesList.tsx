@@ -142,14 +142,17 @@ function ExchangeRatesList({ pagedRates, favorites, handleFavoriteClick, formatC
                         const currencyLabel = formatCurrencyLabel(currency);
                         
                         const result = await Swal.fire({
-                          title: isMobile ? `관심 환율 ${action}` : `관심 환율을 ${action}하시겠습니까?`,
+                          title: `관심 환율을 ${action}하시겠습니까?`,
                           text: currencyLabel,
                           icon: 'question',
                           showCancelButton: true,
                           confirmButtonText: action,
                           cancelButtonText: '취소',
                           confirmButtonColor: '#3b82f6',
-                          cancelButtonColor: '#6b7280'
+                          cancelButtonColor: '#6b7280',
+                          customClass: {
+                            title: isMobile ? 'swal-mobile-title' : '',
+                          }
                         });
                         
                         if (result.isConfirmed) {

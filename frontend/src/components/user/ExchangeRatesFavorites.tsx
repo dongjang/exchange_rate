@@ -144,14 +144,17 @@ function ExchangeRatesFavorites({ favoriteRates, favorites, handleFavoriteClick,
                       const currencyLabel = formatCurrencyLabel(currency);
                       
                       const result = await Swal.fire({
-                        title: isMobile ? '관심 환율 해제' : '관심 환율을 해제하시겠습니까?',
+                        title: '관심 환율을 해제하시겠습니까?',
                         text: currencyLabel,
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonText: '해제',
                         cancelButtonText: '취소',
                         confirmButtonColor: '#10b981',
-                        cancelButtonColor: '#6b7280'
+                        cancelButtonColor: '#6b7280',
+                        customClass: {
+                          title: isMobile ? 'swal-mobile-title' : '',
+                        }
                       });
                       
                       if (result.isConfirmed) {
