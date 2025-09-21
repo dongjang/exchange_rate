@@ -142,7 +142,7 @@ function ExchangeRatesList({ pagedRates, favorites, handleFavoriteClick, formatC
                         const currencyLabel = formatCurrencyLabel(currency);
                         
                         const result = await Swal.fire({
-                          title: `관심 환율을 ${action}하시겠습니까?`,
+                          title: isMobile ? `관심 환율 ${action}` : `관심 환율을 ${action}하시겠습니까?`,
                           text: currencyLabel,
                           icon: 'question',
                           showCancelButton: true,

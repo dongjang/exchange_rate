@@ -144,7 +144,7 @@ function ExchangeRatesFavorites({ favoriteRates, favorites, handleFavoriteClick,
                       const currencyLabel = formatCurrencyLabel(currency);
                       
                       const result = await Swal.fire({
-                        title: '관심 환율을 해제하시겠습니까?',
+                        title: isMobile ? '관심 환율 해제' : '관심 환율을 해제하시겠습니까?',
                         text: currencyLabel,
                         icon: 'question',
                         showCancelButton: true,
