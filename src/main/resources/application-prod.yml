@@ -1,7 +1,7 @@
 spring:
   datasource:
     # AWS RDS MySQL 연결 정보
-    url: ${DB_URL}
+    url: ${DB_URL}&serverTimezone=Asia/Seoul
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -131,6 +131,9 @@ server:
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+# 시간대 설정
+timezone: Asia/Seoul
 
 # 관리 엔드포인트 (운영환경에서는 제한적)
 management:
