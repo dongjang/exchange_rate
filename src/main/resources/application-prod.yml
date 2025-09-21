@@ -1,7 +1,7 @@
 spring:
   datasource:
     # AWS RDS MySQL 연결 정보
-    url: ${DB_URL}&serverTimezone=Asia/Seoul
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
