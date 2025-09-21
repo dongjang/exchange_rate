@@ -122,17 +122,44 @@ const QnaModal: React.FC<QnaModalProps> = ({
             background: 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
             pointerEvents: 'none'
           }} />
-          <h2 style={{
-            margin: 0,
-            fontSize: isSmallMobile ? '1.1rem' : isMobile ? '1.3rem' : '1.75rem',
-            fontWeight: '700',
-            color: 'white',
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             position: 'relative',
-            zIndex: 1,
-            textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            zIndex: 1
           }}>
-            {editingQna && editingQna.status === 'ANSWERED' ? 'Q&A 상세' : (editingQna ? 'Q&A 수정' : 'Q&A 등록')}
-          </h2>
+            <h2 style={{
+              margin: 0,
+              fontSize: isSmallMobile ? '1.1rem' : isMobile ? '1.3rem' : '1.75rem',
+              fontWeight: '700',
+              color: 'white',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            }}>
+              {editingQna && editingQna.status === 'ANSWERED' ? 'Q&A 상세' : (editingQna ? 'Q&A 수정' : 'Q&A 등록')}
+            </h2>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: 'none',
+                borderRadius: '50%',
+                width: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
+                height: isSmallMobile ? '28px' : isMobile ? '30px' : '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'white',
+                fontSize: isSmallMobile ? '14px' : isMobile ? '15px' : '16px',
+                transition: 'background-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* 모달 바디 */}

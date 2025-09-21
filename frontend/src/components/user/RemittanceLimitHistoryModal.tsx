@@ -176,7 +176,7 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: isMobile ? 'flex-start' : 'center',
+      alignItems: 'center',
       zIndex: 1000,
       padding: isMobile ? '1rem 0.5rem' : '1rem',
       overflowY: 'auto'

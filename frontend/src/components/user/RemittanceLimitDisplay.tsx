@@ -204,34 +204,35 @@ const RemittanceLimitDisplay: React.FC<RemittanceLimitDisplayProps> = ({ refresh
             {/* 개인 한도 사용자이거나 대기중인 요청이 있을 때 상세 버튼 표시 */}
             {(limit.limitType === 'USER_LIMIT' || pendingRequest) && (
               <>
-                {/* 승인된 사용자에게만 재신청 버튼 표시 - 모바일에서 우측에 오도록 순서 변경 */}
+                <button
+                  onClick={() => setShowHistoryModal(true)}
+                  className="remittance-limit-status-btn"
+                  style={{ order: (isSmallScreen || internalMobile) ? 1 : 1 }}
+                >
+                  <FaEye style={{ fontSize: '12px' }} />
+                  한도 변경 신청 상세
+                </button>
+                
+                {/* 승인된 사용자에게만 재신청 버튼 표시 - 중간에 배치 */}
                 {limit.limitType === 'USER_LIMIT' && !pendingRequest && (
                   <button
                     onClick={() => setShowLimitModal(true)}
                     className="remittance-limit-rerequest-btn"
-                    style={{ order: (isSmallScreen || internalMobile) ? 2 : 1 }}
+                    style={{ order: (isSmallScreen || internalMobile) ? 2 : 2 }}
                   >
                     <FaEdit style={{ fontSize: '12px' }} />
                     한도 재변경 신청
                   </button>
                 )}
-                
-                <button
-                  onClick={() => setShowHistoryModal(true)}
-                  className="remittance-limit-status-btn"
-                  style={{ order: (isSmallScreen || internalMobile) ? 1 : 2 }}
-                >
-                  <FaEye style={{ fontSize: '12px' }} />
-                  한도 변경 신청 상세
-                </button>
               </>
             )}
-          {/* PC에서 새로고침 버튼 - 항상 표시 */}
+          {/* PC에서 새로고침 버튼 - 가장 오른쪽에 배치 */}
            <button
              onClick={onRefresh || (() => window.location.reload())}
              className="remittance-limit-refresh-btn"
              style={{
-               display: isSmallScreen ? 'none' : 'flex'
+               display: isSmallScreen ? 'none' : 'flex',
+               order: 3
              }}
            >
              <FaSync style={{ fontSize: '12px' }} />
