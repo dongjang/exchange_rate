@@ -5,6 +5,19 @@ import { api } from '../../services/api';
 import { useAtom } from 'jotai';
 import { userInfoAtom } from '../../store/userStore';
 
+// 반응형 SweetAlert2 설정 함수
+const showResponsiveSwal = (config: any) => {
+  const isMobile = window.innerWidth <= 768;
+  return Swal.fire({
+    ...config,
+    width: isMobile ? '90%' : config.width || '500px',
+    customClass: {
+      popup: isMobile ? 'swal-popup-mobile' : '',
+      ...config.customClass
+    }
+  });
+};
+
 interface RemittanceLimit {
   id?: number; // 재신청 모드에서 사용할 ID
   dailyLimit: number;
@@ -224,9 +237,9 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
   };
 
   const removeExistingFile = (category: keyof typeof existingFiles) => {
-    Swal.fire({
+    showResponsiveSwal({
       title: '기존 파일 삭제',
-      html: '<div style="text-align: left; line-height: 1.5;">삭제 후에는 새로운 파일을 업로드할 수 있습니다.<br>기존 파일을 삭제하시겠습니까?</div>',
+      html: '기존 파일을 삭제하시겠습니까?<br/>삭제 후에는 새로운 파일을<br/>업로드할 수 있습니다.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: '삭제',
@@ -302,7 +315,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
   const validateDailyLimit = (): boolean => {
     const dailyLimit = parseInt(formData.dailyLimit.replace(/[^0-9]/g, ''));
     if (!dailyLimit || dailyLimit <= 0) {
-      Swal.fire({
+      showResponsiveSwal({
         icon: 'error',
         title: '일일 한도 입력 오류',
         text: '일일 한도를 입력해주세요.',
@@ -316,7 +329,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
   const validateMonthlyLimit = (): boolean => {
     const monthlyLimit = parseInt(formData.monthlyLimit.replace(/[^0-9]/g, ''));
     if (!monthlyLimit || monthlyLimit <= 0) {
-      Swal.fire({
+      showResponsiveSwal({
         icon: 'error',
         title: '월 한도 입력 오류',
         text: '월 한도를 입력해주세요.',
@@ -330,7 +343,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
   const validateSingleLimit = (): boolean => {
     const singleLimit = parseInt(formData.singleLimit.replace(/[^0-9]/g, ''));
     if (!singleLimit || singleLimit <= 0) {
-      Swal.fire({
+      showResponsiveSwal({
         icon: 'error',
         title: '1회 한도 입력 오류',
         text: '1회 한도를 입력해주세요.',
@@ -343,7 +356,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
 
   const validateReason = (): boolean => {
     if (!formData.reason.trim()) {
-      Swal.fire({
+      showResponsiveSwal({
         icon: 'error',
         title: '신청 사유 입력 오류',
         text: '신청 사유를 입력해주세요.',
@@ -352,7 +365,7 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
       return false;
     }
     if (formData.reason.trim().length < 10) {
-      Swal.fire({
+      showResponsiveSwal({
         icon: 'error',
         title: '신청 사유 입력 오류',
         text: '신청 사유는 최소 10자 이상 입력해주세요.',
@@ -424,10 +437,15 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
     if (!validateFiles()) return;
 
     // Confirm Swal
-    const result = await Swal.fire({
+    const result = await showResponsiveSwal({
       icon: 'question',
       title: isRerequest ? '한도 변경 재신청' : (isEdit ? '한도 변경 신청 수정' : '한도 변경 신청'),
-      text: isRerequest ? '입력하신 내용으로 한도 변경을 재신청하시겠습니까?' : (isEdit ? '입력하신 내용으로 한도 변경 신청을 수정하시겠습니까?' : '입력하신 내용으로 한도 변경을 신청하시겠습니까?'),
+      html: isRerequest 
+        ? '입력하신 내용으로 한도 변경을<br/>재신청하시겠습니까?'
+        : (isEdit 
+          ? '입력하신 내용으로 한도 변경 신청을<br/>수정하시겠습니까?'
+          : '입력하신 내용으로 한도 변경을<br/>신청하시겠습니까?'
+        ),
       showCancelButton: true,
       confirmButtonText: isRerequest ? '재신청하기' : (isEdit ? '수정하기' : '신청하기'),
       cancelButtonText: '취소',
@@ -468,30 +486,30 @@ const RemittanceLimitModal: React.FC<RemittanceLimitModalProps> = ({
         // 재신청 모드 - 기존 요청 UPDATE
         await api.updateRemittanceLimitRequest(currentLimit.id, formDataToSend, true);
         
-        await Swal.fire({
+        await showResponsiveSwal({
           icon: 'success',
           title: '재신청이 완료되었습니다!',
-          text: '관리자 검토 후 결과를 알려드리겠습니다.',
+          html: '관리자 검토 후<br/>결과를 알려드리겠습니다.',
           confirmButtonText: '확인'
         });
       } else if (isEdit && editRequestId) {
         // 수정 모드
         await api.updateRemittanceLimitRequest(editRequestId, formDataToSend);
         
-        await Swal.fire({
+        await showResponsiveSwal({
           icon: 'success',
           title: '수정이 완료되었습니다!',
-          text: '관리자 검토 후 결과를 알려드리겠습니다.',
+          html: '관리자 검토 후<br/>결과를 알려드리겠습니다.',
           confirmButtonText: '확인'
         });
       } else {
         // 신규 신청 모드
         await api.createRemittanceLimitRequest(formDataToSend);
         
-        await Swal.fire({
+        await showResponsiveSwal({
           icon: 'success',
           title: '신청이 완료되었습니다!',
-          text: '관리자 검토 후 결과를 알려드리겠습니다.',
+          html: '관리자 검토 후<br/>결과를 알려드리겠습니다.',
           confirmButtonText: '확인'
         });
       }

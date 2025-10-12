@@ -7,6 +7,19 @@ import RemittanceLimitModal from './RemittanceLimitModal';
 import Swal from 'sweetalert2';
 import './RemittanceLimitHistoryModal.css';
 
+// 반응형 SweetAlert2 설정 함수
+const showResponsiveSwal = (config: any) => {
+  const isMobile = window.innerWidth <= 768;
+  return Swal.fire({
+    ...config,
+    width: isMobile ? '90%' : config.width || '500px',
+    customClass: {
+      popup: isMobile ? 'swal-popup-mobile' : '',
+      ...config.customClass
+    }
+  });
+};
+
 interface FileInfo {
   id: number;
   originalName: string;
@@ -118,10 +131,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
   const handleCancelRequest = async (requestId: number) => {
     if (!userInfo?.id) return;
 
-    const result = await Swal.fire({
+    const result = await showResponsiveSwal({
       icon: 'warning',
       title: '신청 취소',
-      html: '정말로 이 한도 변경 신청을 취소하시겠습니까?<br> 취소 후에는 복구할 수 없습니다.',
+      html: '정말로 이 한도 변경 신청을<br/>취소하시겠습니까?<br/>취소 후에는 복구할 수 없습니다.',
       showCancelButton: true,
       confirmButtonText: '취소',
       cancelButtonText: '돌아가기',
@@ -135,10 +148,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
     try {
       await api.cancelRemittanceLimitRequest(requestId);
       
-      await Swal.fire({
+      await showResponsiveSwal({
         icon: 'success',
         title: '취소 완료',
-        text: '한도 변경 신청이 성공적으로 취소되었습니다.',
+        html: '한도 변경 신청이 성공적으로<br/>취소되었습니다.',
         confirmButtonText: '확인'
       });
 
@@ -155,10 +168,10 @@ const RemittanceLimitHistoryModal: React.FC<RemittanceLimitHistoryModalProps> = 
     } catch (error) {
       console.error('신청 취소 실패:', error);
       
-      await Swal.fire({
+      await showResponsiveSwal({
         icon: 'error',
         title: '취소 실패',
-        text: '신청 취소 중 오류가 발생했습니다. 다시 시도해주세요.',
+        html: '신청 취소 중 오류가 발생했습니다.<br/>다시 시도해주세요.',
         confirmButtonText: '확인'
       });
     }

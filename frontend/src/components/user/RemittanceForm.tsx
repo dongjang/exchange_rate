@@ -10,6 +10,19 @@ import { userInfoAtom } from '../../store/userStore';
 import AccountModal from './AccountModal';
 import RemittanceLimitDisplay from './RemittanceLimitDisplay';
 
+// 반응형 SweetAlert2 설정 함수
+const showResponsiveSwal = (config: any) => {
+  const isMobile = window.innerWidth <= 768;
+  return Swal.fire({
+    ...config,
+    width: isMobile ? '90%' : config.width || '500px',
+    customClass: {
+      popup: isMobile ? 'swal-popup-mobile' : '',
+      ...config.customClass
+    }
+  });
+};
+
 export interface RemittanceFormData {
   senderBank?: string;
   senderAccount?: string;
@@ -154,7 +167,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
 
   const handleAccountSave = async (bank: string, account: string) => {
     if (!bank || !account) {
-      Swal.fire({ 
+      showResponsiveSwal({ 
         icon: 'warning', 
         title: '정보를 모두 입력해 주세요.', 
         customClass: { 
@@ -166,7 +179,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
     }
 
     if (account.length < 5) {
-      Swal.fire({ 
+      showResponsiveSwal({ 
         icon: 'warning', 
         title: '계좌번호를 5자리 이상 입력해 주세요', 
         customClass: { 
@@ -178,7 +191,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
     }
 
     const isEdit = !!myBankAccount && myBankAccount.bankCode && myBankAccount.accountNumber;
-    const result = await Swal.fire({
+    const result = await showResponsiveSwal({
       icon: 'question',
       title: isEdit ? '내 은행/계좌 정보 수정' : '내 은행/계좌 정보 등록',
       text: isEdit ? '내 은행/계좌 정보를 수정하시겠습니까?' : '내 은행/계좌 정보를 등록하시겠습니까?',
@@ -198,7 +211,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
     setForm(prev => ({ ...prev, senderBank: bank, senderAccount: account }));
     (setMyBankAccount as any)({ bankCode: bank, accountNumber: account });
     setShowAccountModal(false);
-    Swal.fire({
+    showResponsiveSwal({
       icon: 'success',
       title: isEdit ? '내 은행/계좌 수정 완료' : '내 은행/계좌 등록 완료',
       text: isEdit ? '내 은행/계좌 정보가 수정되었습니다.' : '내 은행/계좌 정보가 등록되었습니다.',
@@ -243,9 +256,10 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
       ...prev,
       currency: option.value,
       receiverCountry: country,
+      receiverBank: '', // 수취 통화 변경 시 받는 은행 초기화
       receiverAccount: '', // 수취 통화 변경 시 받는 계좌번호 초기화
     }));
-    setSelectedReceiverBank(''); // 수취 통화 바뀌면 받는 은행 초기화
+    setSelectedReceiverBank(''); // 수취 통화 바뀌면 받는 은행 UI 초기화
   };
 
   const cleanAmount = Number(amountInput.replace(/[^0-9]/g, ''));
@@ -258,48 +272,48 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
 
     // Validation
     if (!form.senderBank) {
-      await Swal.fire({ icon: 'warning', title: '보내는 은행을 선택해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '보내는 은행을 선택해 주세요' });
       return;
     }
     if (!form.senderAccount) {
-      await Swal.fire({ icon: 'warning', title: '내 계좌번호를 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '내 계좌번호를 입력해 주세요' });
       return;
     }
     if (form.senderAccount.length < 5) {
-      await Swal.fire({ icon: 'warning', title: '내 계좌번호를 5자리 이상 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '내 계좌번호를 5자리 이상 입력해 주세요' });
       return;
     }
 
     if (!form.currency) {
-      await Swal.fire({ icon: 'warning', title: '수취 통화를 선택해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '수취 통화를 선택해 주세요' });
       return;
     }
     if (!form.receiverBank) {
-      await Swal.fire({ icon: 'warning', title: '받는 은행을 선택해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '받는 은행을 선택해 주세요' });
       return;
     }
     if (!form.receiverAccount) {
-      await Swal.fire({ icon: 'warning', title: '받는 계좌번호를 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '받는 계좌번호를 입력해 주세요' });
       return;
     }
 
     if (form.receiverAccount.length < 5) {
-      await Swal.fire({ icon: 'warning', title: '받는 계좌번호를 5자리 이상 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '받는 계좌번호를 5자리 이상 입력해 주세요' });
       return;
     }
 
     if (!form.receiverName) {
-      await Swal.fire({ icon: 'warning', title: '받는 사람을을 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '받는 사람을 입력해 주세요' });
       return;
     }
     if (!cleanAmount || cleanAmount < 1000) {
-      await Swal.fire({ icon: 'warning', title: '금액을 1,000원 이상 입력해 주세요' });
+      await showResponsiveSwal({ icon: 'warning', title: '금액을 1,000원 이상 입력해 주세요' });
       return;
     }
 
     const convertedAmount = getConvertedAmount(cleanAmount, form.currency);
     
-    const result = await Swal.fire({
+    const result = await showResponsiveSwal({
       icon: 'question',
       title: '송금하기',
       html: `
@@ -398,7 +412,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
           `;
         }
 
-        await Swal.fire({
+        await showResponsiveSwal({
           icon: 'error',
           title: '한도 초과',
           html: limitMessage,
@@ -429,12 +443,21 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
 
       const result = await api.createRemittance(remittanceData);
       
-      await Swal.fire({
-        icon: result.success ? 'success' : 'error',
-        title: result.success ?  '송금 신청 완료' : '송금 신청 실패',
-        text: result.message,
-        confirmButtonColor: result.success ? '#2563eb' : '#dc2626',
-      });
+        const isMobile = window.innerWidth <= 768;
+        const swalConfig: any = {
+          icon: result.success ? 'success' : 'error',
+          title: result.success ?  '송금 신청 완료' : '송금 신청 실패',
+          confirmButtonColor: result.success ? '#2563eb' : '#dc2626',
+        };
+
+        if (result.success) {
+          // 모바일과 데스크톱 모두 html 사용 (줄바꿈 포함)
+          swalConfig.html = '송금 신청이 접수되었습니다.<br/>송금이력에서 확인해 주세요.';
+        } else {
+          swalConfig.text = result.message;
+        }
+
+        await showResponsiveSwal(swalConfig);
 
       // 송금 완료 후 한도 정보 새로고침
       if (onSubmit) {
@@ -505,7 +528,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
           `;
         }
 
-        await Swal.fire({
+        await showResponsiveSwal({
           icon: 'error',
           title: '한도 초과',
           html: limitMessage,
@@ -515,7 +538,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
         return;
       }
       
-      await Swal.fire({
+      await showResponsiveSwal({
         icon: 'error',
         title: '송금 신청 실패',
         text: '송금 신청 중 오류가 발생했습니다. 다시 시도해 주세요.',
@@ -621,7 +644,7 @@ function RemittanceForm({ onSubmit, refreshKey = 0, onRefresh, isSmallScreen = f
         bankOptions={senderBankOptions}
         onSave={async (bank, account) => {
           if (!bank || !account) {
-            await Swal.fire({
+            await showResponsiveSwal({
               icon: 'warning',
               title: '정보를 모두 입력해 주세요.',
               customClass: { 

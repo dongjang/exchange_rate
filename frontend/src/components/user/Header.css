@@ -7,6 +7,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-content {
@@ -18,6 +20,8 @@
   align-items: center;
   height: 70px;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 데스크톱 레이아웃 */
@@ -464,7 +468,133 @@
   }
 }
 
-/* 반응형 디자인 */
+
+/* 중간 화면 크기 (1269px 미만 ~ 1000px) - 메뉴와 이름 영역 겹침 방지 */
+@media (max-width: 1269px) and (min-width: 1000px) {
+  .header-content {
+    padding: 0 1rem;
+    gap: 0.75rem;
+    justify-content: space-between;
+  }
+  
+  .header-left {
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+  
+  .header-nav {
+    gap: 0.3rem;
+    margin: 0 0;
+    flex-shrink: 1;
+  }
+  
+  .nav-link {
+    padding: 0.9rem 0.8rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  
+  .header-right {
+    min-width: 260px;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .desktop-user-section {
+    min-width: 0px !important;
+    padding: 0.5rem 0.7rem;
+  }
+  
+  .desktop-user-name {
+    font-size: 0.8rem;
+    max-width: 90px;
+  }
+  
+  .desktop-logout-button {
+    min-width: 90px;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* 작은 중간 화면 크기 (999px 미만 ~ 769px) - 더 컴팩트한 레이아웃 */
+@media (max-width: 999px) and (min-width: 769px) {
+  .header-content {
+    padding: 0 0.75rem;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+  
+  .header-left {
+    min-width: 60px !important;
+    flex-shrink: 0;
+  }
+  
+  .home-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .home-button svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .header-nav {
+    gap: 0.3rem;
+    margin: 0 0;
+    flex-shrink: 1;
+  }
+  
+  .nav-link {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  
+  .nav-link svg {
+    width: 13px;
+    height: 13px;
+  }
+  
+  .header-right {
+    min-width: 180px;
+    gap: 0.2rem;
+    flex-shrink: 0;
+    margin-left: 0.25rem;
+  }
+  
+  .desktop-user-section {
+    min-width: 0px !important;
+    padding: 0.3rem 0.35rem;
+  }
+  
+  .desktop-user-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .desktop-user-name {
+    font-size: 0.65rem;
+    max-width: 60px;
+  }
+  
+  .desktop-logout-button {
+    min-width: 65px;
+    padding: 0.25rem 0.35rem;
+    font-size: 0.65rem;
+  }
+  
+  .desktop-logout-button svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* 모바일 레이아웃 */
 @media (max-width: 768px) {
   .header-content {
     padding: 0 16px;
