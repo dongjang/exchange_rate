@@ -297,17 +297,17 @@
         {
           "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/files.*\"}[5m]) > 0",
           "interval": "",
-          "legendFormat": "파일 업로드/다운로드",
+          "legendFormat": "파일 관련 요청 ({{method}} {{uri}})",
           "refId": "A"
         },
         {
           "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/exchange.*\"}[5m]) > 0",
           "interval": "",
-          "legendFormat": "외부 환율 API 호출",
+          "legendFormat": "환율 API 호출",
           "refId": "B"
         }
       ],
-      "title": "파일 및 외부 API 사용량",
+      "title": "파일 관련 및 환율 API 요청 사용량",
       "type": "timeseries"
     },
     {
