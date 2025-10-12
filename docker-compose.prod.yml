@@ -40,7 +40,6 @@ services:
       - ./logs:/app/logs
     networks:
       - user-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s

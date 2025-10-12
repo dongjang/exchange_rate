@@ -9,7 +9,6 @@ services:
       - redis_data:/data
     networks:
       - user-network
-    restart: unless-stopped
     command: redis-server --appendonly yes
 
 volumes:
