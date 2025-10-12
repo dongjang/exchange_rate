@@ -21,6 +21,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-core'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     implementation 'mysql:mysql-connector-java:8.0.33'
     implementation 'commons-io:commons-io:2.11.0'
@@ -41,4 +44,8 @@ configurations {
 
 test {
     useJUnitPlatform()
-} 
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ["-parameters"]
+}

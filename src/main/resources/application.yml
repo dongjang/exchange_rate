@@ -15,3 +15,29 @@ spring:
 # 서버 설정
 server:
   port: 8080
+
+# Actuator 설정 - 메트릭 노출
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    enable:
+      hikaricp: true
+    distribution:
+      percentiles-histogram:
+        hikaricp.connections.creation: true
+        hikaricp.connections.usage: true
+      percentiles:
+        hikaricp.connections.creation: 0.5,0.95,0.99
+        hikaricp.connections.usage: 0.5,0.95,0.99
+  prometheus:
+    metrics:
+      export:
+        enabled: true

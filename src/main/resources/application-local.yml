@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   devtools:
     restart:
@@ -13,6 +16,15 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      register-mbeans: true
+      metrics-name: hikaricp
+      pool-name: "UserDB-Pool"
   jpa:
     hibernate:
       ddl-auto: update
@@ -80,7 +92,7 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 6380
       timeout: 2000ms
       lettuce:
         pool:
@@ -96,4 +108,12 @@ exchange:
 # 파일 업로드 설정
 file:
   upload:
-    path: uploads 
+    path: uploads
+
+# 로깅 설정 (로컬 개발)
+logging:
+  level:
+    com.example: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.springframework.security: DEBUG

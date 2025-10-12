@@ -1,0 +1,416 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short",
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "delta(http_server_requests_seconds_count{uri=\"/api/users/auth/success\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "로그인 성공",
+          "refId": "A"
+        },
+        {
+          "expr": "delta(http_server_requests_seconds_count{uri=\"/api/users/auth/failure\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "로그인 실패",
+          "refId": "B"
+        },
+        {
+          "expr": "delta(http_server_requests_seconds_count{uri=\"/api/users/auth/logout\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "로그아웃",
+          "refId": "C"
+        }
+      ],
+      "title": "사용자 로그인/로그아웃 시도",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/profile.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "사용자 관리 {{method}} {{uri}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/remittances.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "송금 관리 {{method}} {{uri}}",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/countries.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "국가 관리 {{method}} {{uri}}",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/banks.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "은행 관리 {{method}} {{uri}}",
+          "refId": "D"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/notices.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "공지사항 {{method}} {{uri}}",
+          "refId": "E"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/qna.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "Q&A {{method}} {{uri}}",
+          "refId": "F"
+        }
+      ],
+      "title": "기능 사용량",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/files.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "파일 업로드/다운로드",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(http_server_requests_seconds_count{uri=~\"/api/users/exchange.*\"}[5m]) > 0",
+          "interval": "",
+          "legendFormat": "외부 환율 API 호출",
+          "refId": "B"
+        }
+      ],
+      "title": "파일 및 외부 API 사용량",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "http_server_requests_seconds_max{uri=~\"/api/users/.*\"} > 0",
+          "interval": "",
+          "legendFormat": "{{method}} {{uri}} - 95th percentile",
+          "refId": "A"
+        },
+        {
+          "expr": "http_server_requests_seconds_max{uri=~\"/api/users/.*\"} > 0",
+          "interval": "",
+          "legendFormat": "{{method}} {{uri}} - 50th percentile",
+          "refId": "B"
+        }
+      ],
+      "title": "API별 응답 시간",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": ["user", "activity"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "사용자 활동 추적",
+  "uid": "user-activity-dashboard",
+  "version": 1
+}

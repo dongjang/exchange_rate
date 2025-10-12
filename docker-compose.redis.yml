@@ -1,0 +1,22 @@
+services:
+  # Redis Cache (User App 전용)
+  redis:
+    image: redis:7-alpine
+    container_name: user-redis
+    ports:
+      - "6380:6379"  # 포트 충돌 방지
+    volumes:
+      - redis_data:/data
+    networks:
+      - user-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+
+networks:
+  user-network:
+    name: user-network
+    driver: bridge
+
