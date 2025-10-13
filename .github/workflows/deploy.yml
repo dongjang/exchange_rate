@@ -87,12 +87,12 @@ jobs:
           fi
           
           # User 프로젝트 디렉토리로 이동 또는 클론
-          if [ -d "exchange_rate_user" ]; then
-            cd exchange_rate_user
+          if [ -d "exchange_rate" ]; then
+            cd exchange_rate
             git pull origin master
           else
-            git clone https://github.com/${{ github.repository }}.git exchange_rate_user
-            cd exchange_rate_user
+            git clone https://github.com/${{ github.repository }}.git exchange_rate
+            cd exchange_rate
           fi
           
           # 빌드
