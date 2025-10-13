@@ -6,6 +6,9 @@ services:
     ports:
       - "8081:8081"
     environment:
+      # Timezone
+      TZ: Asia/Seoul
+      
       # Database
       DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}

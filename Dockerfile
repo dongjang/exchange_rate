@@ -12,9 +12,14 @@ RUN gradle build -x test --no-daemon
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre
 
+# Set timezone
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
     curl \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app user
