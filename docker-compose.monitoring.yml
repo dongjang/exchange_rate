@@ -49,6 +49,8 @@ services:
     container_name: exchange-rate-user-node-exporter
     ports:
       - "9101:9100"  # Admin과 포트 충돌 방지
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
