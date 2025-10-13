@@ -49,7 +49,7 @@ public class FileService {
         File file = new File();
         file.setOriginalName(originalFilename);
         file.setStoredName(storedFilename);
-        file.setFilePath(filePath.toAbsolutePath().toString());
+        file.setFilePath(uploadPath + "/" + storedFilename);  // 상대 경로로 저장
         file.setFileSize(multipartFile.getSize());
         file.setFileType(multipartFile.getContentType());
         file.setUploadUserId(uploadUserId);
