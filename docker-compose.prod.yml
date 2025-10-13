@@ -36,7 +36,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
     volumes:
-      - ./uploads:/app/uploads
+      - ~/uploads:/app/uploads
       - ./logs:/app/logs
     networks:
       - user-network
