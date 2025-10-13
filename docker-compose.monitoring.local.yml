@@ -5,6 +5,8 @@ services:
     container_name: exchange-rate-user-prometheus-local
     ports:
       - "9091:9090"
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - ./monitoring/prometheus-local.yml:/etc/prometheus/prometheus.yml
       - prometheus_data_local:/prometheus
@@ -25,6 +27,7 @@ services:
     ports:
       - "3001:3000"
     environment:
+      - TZ=Asia/Seoul
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-user}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_USER_PASSWORD:-user123}
       - GF_SMTP_ENABLED=true
@@ -46,6 +49,8 @@ services:
     container_name: exchange-rate-user-node-exporter-local
     ports:
       - "9101:9100"  # Admin과 포트 충돌 방지
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
