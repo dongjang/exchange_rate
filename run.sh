@@ -44,26 +44,49 @@ done
 echo "환경변수 설정 완료!"
 echo
 
-# Admin Redis 상태 확인
-if docker ps | grep -q "shared-redis"; then
-    echo "✓ Admin Redis (shared-redis) 실행 중 - 보호됨"
-else
-    echo "⚠️ Admin Redis (shared-redis)가 실행 중이지 않습니다."
-    echo "   Admin App과 함께 실행해주세요."
+# Admin 관련 서비스 상태 확인
+echo "Admin 관련 서비스 상태 확인 중..."
+admin_services=("exadmin-admin-app" "shared-redis")
+all_admin_running=true
+
+for service in "${admin_services[@]}"; do
+    if docker ps --format "{{.Names}}" | grep -q "^${service}$"; then
+        echo "  ✓ ${service} 실행 중 - 보호됨"
+    else
+        echo "  ⚠️ ${service}가 실행 중이지 않습니다."
+        all_admin_running=false
+    fi
+done
+
+if [ "$all_admin_running" = false ]; then
+    echo
+    echo "⚠️ 일부 Admin 서비스가 실행되지 않았습니다."
+    echo "   Admin App을 먼저 실행해주세요."
+    echo
 fi
-echo
 
 # ============================================
 # 1단계: 완전 정리
 # ============================================
 echo "1단계: 기존 컨테이너 및 프로세스 완전 정리 중..."
 
-# Java 프로세스 종료 (Docker 외부에서 실행 중인 경우)
-echo "Java 프로세스 종료 중..."
-sudo pkill -9 java 2>/dev/null || true
+# User App Java 프로세스만 종료 (Docker 외부에서 실행 중인 경우)
+echo "User App Java 프로세스 종료 중..."
+# admin-app은 보호하고 user-app 관련 프로세스만 종료
+sudo pkill -f "exproject-user-app" 2>/dev/null || true
 sleep 2
 
-# User App 관련 컨테이너만 중지 및 제거 (admin Redis는 보호)
+# Admin 관련 컨테이너 보호 확인
+echo "Admin 관련 컨테이너 보호 중..."
+admin_containers=("exadmin-admin-app" "shared-redis" "admin-grafana" "admin-prometheus" "admin-node-exporter")
+for container in "${admin_containers[@]}"; do
+    if docker ps --format "{{.Names}}" | grep -q "^${container}$"; then
+        echo "  ✓ ${container} 보호됨 (정리하지 않음)"
+    fi
+done
+
+# User App 관련 컨테이너만 중지 및 제거
+echo "User App 관련 컨테이너만 정리 중..."
 docker stop exproject-user-app exchange-rate-user-grafana exchange-rate-user-prometheus exchange-rate-user-node-exporter user-redis 2>/dev/null || true
 docker rm -f exproject-user-app exchange-rate-user-grafana exchange-rate-user-prometheus exchange-rate-user-node-exporter user-redis 2>/dev/null || true
 
