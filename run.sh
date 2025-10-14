@@ -44,6 +44,15 @@ done
 echo "환경변수 설정 완료!"
 echo
 
+# Admin Redis 상태 확인
+if docker ps | grep -q "shared-redis"; then
+    echo "✓ Admin Redis (shared-redis) 실행 중 - 보호됨"
+else
+    echo "⚠️ Admin Redis (shared-redis)가 실행 중이지 않습니다."
+    echo "   Admin App과 함께 실행해주세요."
+fi
+echo
+
 # ============================================
 # 1단계: 완전 정리
 # ============================================
@@ -54,7 +63,7 @@ echo "Java 프로세스 종료 중..."
 sudo pkill -9 java 2>/dev/null || true
 sleep 2
 
-# 모든 관련 컨테이너 중지 및 제거
+# User App 관련 컨테이너만 중지 및 제거 (admin Redis는 보호)
 docker stop exproject-user-app exchange-rate-user-grafana exchange-rate-user-prometheus exchange-rate-user-node-exporter user-redis 2>/dev/null || true
 docker rm -f exproject-user-app exchange-rate-user-grafana exchange-rate-user-prometheus exchange-rate-user-node-exporter user-redis 2>/dev/null || true
 
@@ -63,8 +72,12 @@ docker-compose -f docker-compose.prod.yml down --remove-orphans 2>/dev/null || t
 docker-compose -f docker-compose.monitoring.yml down --remove-orphans 2>/dev/null || true
 docker-compose -f docker-compose.redis.yml down --remove-orphans 2>/dev/null || true
 
-# 네트워크 정리
-docker network rm user-network 2>/dev/null || true
+# 네트워크 정리 (admin 네트워크와 충돌 방지)
+echo "네트워크 정리 중... (admin 네트워크는 보호)"
+# user-network가 존재하고 사용 중이 아닌 경우에만 제거
+if docker network ls | grep -q "user-network" && ! docker ps --format "{{.Networks}}" | grep -q "user-network"; then
+    docker network rm user-network 2>/dev/null || true
+fi
 
 echo "정리 완료!"
 echo
