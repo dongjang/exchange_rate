@@ -214,7 +214,7 @@ export function ExchangeRates({ user }: { user: User | null }) {
       {/* 헤더 섹션 */}
       <CommonPageHeader
         title="💱 오늘의 환율"
-        subtitle="1원화 (KRW) 기준"
+        subtitle="1원 (KRW) 기준"
         gradientColors={{ from: '#667eea', to: '#764ba2' }}
       />
       
