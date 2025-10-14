@@ -304,7 +304,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         <div className="rates-section">
           <div className="rates-card">
             <div className="card-header">
-              <h2>💱 환율 TOP5 <span style={{fontSize: '0.8em', color: '#666', fontWeight: 'normal'}}>(1원(KRW) 기준)</span></h2>
+              <h2>💱 환율 TOP5 <span style={{fontSize: '0.8em', color: '#333', fontWeight: 'normal'}}>(1원(KRW) 기준)</span></h2>
               <button className="more-btn" onClick={() => navigate('/exchange-rates')}>더보기</button>
             </div>
             <div className="rates-combined-grid">
