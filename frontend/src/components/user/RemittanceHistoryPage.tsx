@@ -90,8 +90,8 @@ function RemittanceHistoryPage() {
       
       setError(null);
     } catch (err) {
-      console.error('송금 이력 조회 실패:', err);
-      setError('송금 이력을 불러오는데 실패했습니다.');
+      console.error('송금 내역 조회 실패:', err);
+      setError('송금 내역을 불러오는데 실패했습니다.');
       setRemittances([]);
     } finally {
       setLoading(false);
@@ -202,7 +202,7 @@ function RemittanceHistoryPage() {
       margin: isMobile ? '0' : '0.9rem auto 2.5rem'
     }}>
       <CommonPageHeader
-        title="📋 송금 이력"
+        title="📋 송금 내역"
         subtitle="송금 내역을 확인하실 수 있습니다"
         gradientColors={{ from: '#667eea', to: '#764ba2' }}
       />

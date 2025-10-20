@@ -174,7 +174,7 @@ function RemittanceList({ remittances, onRemittanceClick }: RemittanceListProps)
                   fontSize: '1.1rem',
                   borderBottom: '1px solid #e5e7eb'
                 }}>
-                  송금 이력이 없습니다.
+                  송금 내역이 없습니다.
                 </td>
               </tr>
             ) : (

@@ -187,7 +187,7 @@ export const api = {
     return response.data;
   },
 
-  // 송금 이력 검색 (페이징 포함)
+  // 송금 내역 검색 (페이징 포함)
   async searchRemittanceHistory(params: {
     recipient?: string;
     currency?: string;

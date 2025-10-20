@@ -390,7 +390,7 @@ public class RemittanceService {
         return remittanceMapper.getRemittanceDetailWithBankInfo(remittanceId, userId);
     }
 
-    // 동적 검색 조건으로 송금 이력 조회 (페이징 포함) - 기존 사용자용
+    // 동적 검색 조건으로 송금 내역 조회 (페이징 포함) - 기존 사용자용
     public UserRemittanceHistoryResponse getRemittanceHistory(UserRemittanceHistorySearchRequest params) {
         // 기존 로직을 그대로 유지 (기존 사용자용 API)
         // 파라미터 준비

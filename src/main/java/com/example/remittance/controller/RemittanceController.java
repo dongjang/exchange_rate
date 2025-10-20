@@ -86,7 +86,7 @@ public class RemittanceController {
         return ResponseEntity.ok(response);
     }
 
-    // 동적 검색 조건으로 송금 이력 조회 (페이징 포함)
+    // 동적 검색 조건으로 송금 내역 조회 (페이징 포함)
     @PostMapping("/history")
     public ResponseEntity<UserRemittanceHistoryResponse> getRemittanceHistory(@RequestBody UserRemittanceHistorySearchRequest params) {
         UserRemittanceHistoryResponse response = userRemittanceService.getRemittanceHistory(params);
