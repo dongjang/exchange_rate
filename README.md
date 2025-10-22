@@ -35,7 +35,7 @@
 사용자는 Google OAuth 2.0 로그인 후 환율 조회, 송금 시뮬레이션, 실제 송금 처리, 송금 한도 관리, 송금 내역 조회 등의 기능을 이용할 수 있습니다.  
 Google OAuth 2.0 인증, Redis 캐싱, Docker 컨테이너화, Prometheus/Grafana 모니터링 및 알림 등 실무 기술을 활용하여 구축했습니다.
 
-> **주요 화면 보기**: [Wiki에서 확인](https://github.com/dongjang/exchange_rate/wiki)
+> **주요 화면 보기**: [Wiki에서 확인](https://github.com/dongjang/exchange_rate/wiki/%EC%A3%BC%EC%9A%94-%ED%99%94%EB%A9%B4)
 
 ---
 
