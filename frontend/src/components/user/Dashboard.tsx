@@ -582,6 +582,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
           }}
           setFormData={() => {}}
           isSubmitting={false}
+          onBackdropClick={handleCloseQnaModal}
         />
       )}
 

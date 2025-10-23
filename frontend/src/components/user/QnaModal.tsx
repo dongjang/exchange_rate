@@ -25,6 +25,7 @@ interface QnaModalProps {
   };
   setFormData: (data: any) => void;
   isSubmitting: boolean;
+  onBackdropClick?: () => void;
 }
 
 const QnaModal: React.FC<QnaModalProps> = ({
@@ -35,7 +36,8 @@ const QnaModal: React.FC<QnaModalProps> = ({
   editingQna,
   formData,
   setFormData,
-  isSubmitting
+  isSubmitting,
+  onBackdropClick
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -77,34 +79,40 @@ const QnaModal: React.FC<QnaModalProps> = ({
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      backdropFilter: 'blur(4px)',
-      padding: isSmallMobile ? '0.5rem 0.25rem' : isMobile ? '0.75rem 0.5rem' : '0',
-      boxSizing: 'border-box',
-      overflowY: 'auto'
-    }}>
-      <div style={{
-        background: 'white',
-        borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
-        width: isSmallMobile ? '98%' : isMobile ? '95%' : '90%',
-        maxWidth: isSmallMobile ? '380px' : isMobile ? '450px' : '700px',
-        maxHeight: isSmallMobile ? '95vh' : isMobile ? '95vh' : '90vh',
-        overflow: 'hidden',
-        boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        marginTop: isMobile ? '1rem' : '0',
-        marginBottom: isMobile ? '1rem' : '0'
-      }}>
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        backdropFilter: 'blur(4px)',
+        padding: isSmallMobile ? '0.5rem 0.25rem' : isMobile ? '0.75rem 0.5rem' : '0',
+        boxSizing: 'border-box',
+        overflowY: 'auto'
+      }}
+      onClick={onBackdropClick}
+    >
+      <div 
+        style={{
+          background: 'white',
+          borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
+          width: isSmallMobile ? '98%' : isMobile ? '95%' : '90%',
+          maxWidth: isSmallMobile ? '380px' : isMobile ? '450px' : '700px',
+          maxHeight: isSmallMobile ? '95vh' : isMobile ? '95vh' : '90vh',
+          overflow: 'hidden',
+          boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          marginTop: isMobile ? '1rem' : '0',
+          marginBottom: isMobile ? '1rem' : '0'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 모달 헤더 */}
         <div style={{
           padding: isSmallMobile ? '12px 16px 10px 16px' : isMobile ? '16px 20px 14px 20px' : '32px 32px 24px 32px',
