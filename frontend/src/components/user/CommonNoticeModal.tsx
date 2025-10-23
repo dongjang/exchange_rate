@@ -299,12 +299,12 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
             <button
               onClick={handleHideToday}
               style={{
-                padding: '12px 24px',
+                padding: window.innerWidth <= 380 ? '12px 15px' : '12px 24px',
                 backgroundColor: '#f59e0b',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
-                fontSize: '14px',
+                fontSize: window.innerWidth <= 380 ? '11px' : '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s ease'
@@ -318,12 +318,12 @@ const CommonNoticeModal: React.FC<CommonNoticeModalProps> = ({
           <button
             onClick={onClose}
             style={{
-              padding: '12px 32px',
+              padding: window.innerWidth <= 380 ? '12px 25px' : '12px 32px',
               backgroundColor: '#667eea',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '14px',
+              fontSize: window.innerWidth <= 380 ? '11px' : '14px',
               fontWeight: '600',
               cursor: 'pointer',
               transition: 'background-color 0.2s ease'

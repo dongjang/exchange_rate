@@ -237,11 +237,3 @@
   }
 }
 
-/* 360px 이하에서 버튼 폰트 크기 조정 */
-@media (max-width: 360px) {
-  .hide-today-btn,
-  .close-modal-btn {
-    font-size: 11px;
-  }
-}
-
