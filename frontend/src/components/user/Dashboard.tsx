@@ -13,6 +13,7 @@ import { api } from '../../services/api';
 import { userInfoAtom } from '../../store/userStore';
 import RemittanceDetailModal from './RemittanceDetailModal';
 import CommonNoticeModal from './CommonNoticeModal';
+import QnaModal from './QnaModal';
 import './Dashboard.css';
 
 interface User {
@@ -43,8 +44,11 @@ interface RemittanceHistory {
   exchangeRate?: number;
   convertedAmount?: number;
   status: string;
+  failureReason?: string;
   createdAt: string;
   updatedAt: string;
+  senderBankName?: string;
+  receiverBankName?: string;
 }
 
 const formatCurrencyLabel = (code: string, countries: {code: string, codeName: string, countryName: string}[]) => {
@@ -69,6 +73,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const [hideToday, setHideToday] = useState(false);
   const [notices, setNotices] = useState<any[]>([]);
   const [qnaItems, setQnaItems] = useState<any[]>([]);
+  const [selectedNotice, setSelectedNotice] = useState<any | null>(null);
+  const [selectedQna, setSelectedQna] = useState<any | null>(null);
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [showQnaModal, setShowQnaModal] = useState(false);
   
   const updateExchangeRates = useSetAtom(updateExchangeRatesAtom);
   const updateFavoriteCurrencies = useSetAtom(updateFavoriteCurrenciesAtom);
@@ -281,6 +289,61 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     handleCloseImportantNoticeModal();
   };
 
+  // 송금 내역 클릭 핸들러
+  const handleRemittanceClick = async (remittance: RemittanceHistory) => {
+    try {
+      // DB에서 최신 송금 상세 정보 조회 (실패 사유 포함)
+      const detailRemittance = await api.getRemittanceDetail(remittance.id);
+      setSelectedRemittance(detailRemittance);
+    } catch (error) {
+      console.error('송금 상세 조회 실패:', error);
+      // 실패 시 기존 데이터로 표시
+      setSelectedRemittance(remittance);
+    }
+  };
+
+  // 공지사항 클릭 핸들러
+  const handleNoticeClick = async (notice: any) => {
+    try {
+      // 개별 API 호출로 최신 데이터 가져오기
+      const noticeDetail = await api.getNoticeById(notice.id);
+      
+      // 조회수 증가 API 호출
+      await api.incrementNoticeViewCount(notice.id);
+      
+      // 최신 데이터로 조회수 증가된 상태로 설정
+      const updatedNotice = { ...noticeDetail, viewCount: noticeDetail.viewCount + 1 };
+      setSelectedNotice(updatedNotice);
+      
+      // 로컬 상태도 업데이트
+      setNotices(prev => prev.map(n => 
+        n.id === notice.id ? updatedNotice : n
+      ));
+    } catch (error) {
+      console.error('공지사항 상세 정보 조회 또는 조회수 증가 실패:', error);
+      // 에러 발생 시 기존 데이터로 모달 열기
+      setSelectedNotice(notice);
+    }
+    setShowNoticeModal(true);
+  };
+
+  // Q&A 클릭 핸들러
+  const handleQnaClick = (qna: any) => {
+    setSelectedQna(qna);
+    setShowQnaModal(true);
+  };
+
+  // 모달 닫기 핸들러들
+  const handleCloseNoticeModal = () => {
+    setShowNoticeModal(false);
+    setSelectedNotice(null);
+  };
+
+  const handleCloseQnaModal = () => {
+    setShowQnaModal(false);
+    setSelectedQna(null);
+  };
+
 
 
 
@@ -383,7 +446,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                 recentRemittances.map((remit, index) => (
                   <div 
                     key={remit.id} 
-                    className="remittance-item"
+                    className="remittance-item clickable"
+                    onClick={() => handleRemittanceClick(remit)}
                   >
                     <div className="remittance-details-left">
                       <span className="date">{formatDate(remit.createdAt)}</span>
@@ -425,7 +489,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                              <div className="info-list">
                  {notices.length > 0 ? (
                    notices.map((notice) => (
-                     <div key={notice.id} className="info-item">
+                     <div key={notice.id} className="info-item clickable" onClick={() => handleNoticeClick(notice)}>
                        <div className="info-content">
                          <span className={`title ${notice.priority === 'HIGH' ? 'important' : ''}`}>
                            {notice.title}
@@ -456,7 +520,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                              <div className="info-list">
                  {qnaItems.length > 0 ? (
                    qnaItems.map((qna) => (
-                     <div key={qna.id} className="info-item">
+                     <div key={qna.id} className="info-item clickable" onClick={() => handleQnaClick(qna)}>
                        <div className="info-content">
                          <span className="title">{qna.title}</span>
                          <span className="date">{formatNoticeDate(qna.createdAt)}</span>
@@ -482,7 +546,46 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         </div>
       </div>
 
-                   {/* 중요 공지사항 모달 */}
+     {/* 송금 내역 상세 모달 */}
+      <RemittanceDetailModal
+        isOpen={!!selectedRemittance}
+        onClose={() => setSelectedRemittance(null)}
+        remittance={selectedRemittance}
+      />
+
+      {/* 공지사항 상세 모달 */}
+      {selectedNotice && (
+        <CommonNoticeModal
+          isOpen={showNoticeModal}
+          notice={selectedNotice}
+          onClose={handleCloseNoticeModal}
+          isImportantNotice={false}
+        />
+      )}
+
+      {/* Q&A 상세 모달 */}
+      {selectedQna && (
+        <QnaModal
+          isOpen={showQnaModal}
+          onClose={handleCloseQnaModal}
+          onSubmit={() => {}}
+          onCancel={handleCloseQnaModal}
+          editingQna={{
+            ...selectedQna,
+            status: 'ANSWERED'
+          }}
+          formData={{
+            title: selectedQna.title,
+            content: selectedQna.content,
+            file: null,
+            removeExistingFile: false
+          }}
+          setFormData={() => {}}
+          isSubmitting={false}
+        />
+      )}
+
+      {/* 중요 공지사항 모달 */}
       {importantNotices.length > 0 && (
         <CommonNoticeModal
           isOpen={showImportantNoticeModal}

@@ -275,7 +275,7 @@
 .remittance-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: 16px;
   background: #f8fafc;
   border-radius: 12px;
@@ -306,11 +306,18 @@
   color: #6b7280;
 }
 
+.remittance-details-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .receiver-currency-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .amount-status-row {
@@ -360,6 +367,8 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  margin-left: 12px;
+  flex-shrink: 0;
 }
 
 .status.completed {
@@ -426,6 +435,24 @@
 
 .info-item:hover {
   background: #f1f5f9;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(30,41,59,0.1);
+}
+
+/* 클릭 가능한 요소 스타일 */
+.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable:hover {
+  background: #f1f5f9 !important;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(30,41,59,0.1);
+}
+
+.remittance-item.clickable:hover {
+  background: #f1f5f9 !important;
   transform: translateX(4px);
   box-shadow: 0 2px 8px rgba(30,41,59,0.1);
 }
@@ -639,9 +666,6 @@
     border-radius: 6px;
   }
   
-  .receiver-currency-row {
-    gap: 4px;
-  }
   
   .card-header {
     padding: 10px 12px;

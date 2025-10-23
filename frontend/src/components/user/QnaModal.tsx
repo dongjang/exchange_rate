@@ -89,15 +89,15 @@ const QnaModal: React.FC<QnaModalProps> = ({
       justifyContent: 'center',
       zIndex: 1000,
       backdropFilter: 'blur(4px)',
-      padding: isMobile ? '1rem 0.5rem' : '0',
+      padding: isSmallMobile ? '0.5rem 0.25rem' : isMobile ? '0.75rem 0.5rem' : '0',
       boxSizing: 'border-box',
       overflowY: 'auto'
     }}>
       <div style={{
         background: 'white',
         borderRadius: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
-        width: isSmallMobile ? '95%' : isMobile ? '90%' : '90%',
-        maxWidth: isSmallMobile ? '400px' : isMobile ? '500px' : '700px',
+        width: isSmallMobile ? '98%' : isMobile ? '95%' : '90%',
+        maxWidth: isSmallMobile ? '380px' : isMobile ? '450px' : '700px',
         maxHeight: isSmallMobile ? '95vh' : isMobile ? '95vh' : '90vh',
         overflow: 'hidden',
         boxShadow: isSmallMobile ? '0 8px 25px rgba(0, 0, 0, 0.15)' : isMobile ? '0 15px 35px rgba(0, 0, 0, 0.2)' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
@@ -107,7 +107,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
       }}>
         {/* 모달 헤더 */}
         <div style={{
-          padding: isSmallMobile ? '16px 20px 12px 20px' : isMobile ? '20px 24px 16px 24px' : '32px 32px 24px 32px',
+          padding: isSmallMobile ? '12px 16px 10px 16px' : isMobile ? '16px 20px 14px 20px' : '32px 32px 24px 32px',
           borderBottom: '1px solid #f1f5f9',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           position: 'relative',
@@ -164,7 +164,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
 
         {/* 모달 바디 */}
         <div style={{ 
-          padding: isSmallMobile ? '12px 16px' : isMobile ? '16px 20px' : '32px', 
+          padding: isSmallMobile ? '10px 12px' : isMobile ? '12px 16px' : '32px', 
           maxHeight: isSmallMobile ? '70vh' : isMobile ? '70vh' : '60vh', 
           overflowY: 'auto',
         }}>
@@ -300,11 +300,33 @@ const QnaModal: React.FC<QnaModalProps> = ({
                 color: '#1e293b'
               }}>
                 {editingQna.fileName ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '16px', color: '#10b981' }}>📎</span>
-                    <span style={{ color: '#10b981', fontWeight: '500' }}>
-                      {editingQna.fileName}
-                    </span>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'flex-start', 
+                    gap: '8px'
+                  }}>
+                    <span style={{ 
+                      fontSize: '16px', 
+                      color: '#10b981',
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}>📎</span>
+                    <div style={{ 
+                      flex: '1',
+                      minWidth: 0
+                    }}>
+                      <span style={{ 
+                        color: '#10b981', 
+                        fontWeight: '500',
+                        wordBreak: 'break-all',
+                        lineHeight: '1.4',
+                        display: 'block',
+                        textAlign: 'left',
+                        whiteSpace: 'normal'
+                      }}>
+                        {editingQna.fileName}
+                      </span>
+                    </div>
                   </div>
                 ) : (
                   <span style={{ color: '#6b7280' }}>첨부파일 없음</span>
@@ -320,33 +342,59 @@ const QnaModal: React.FC<QnaModalProps> = ({
                     padding: '12px',
                     background: '#f0f9ff',
                     border: '1px solid #0ea5e9',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
+                    borderRadius: '8px'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '16px', color: '#0ea5e9' }}>📎</span>
-                      <span style={{ fontSize: '14px', color: '#0c4a6e', fontWeight: '500' }}>
-                        기존 파일: {editingQna.fileName}
-                      </span>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      gap: '8px',
+                      marginBottom: '8px'
+                    }}>
+                      <span style={{ 
+                        fontSize: '16px', 
+                        color: '#0ea5e9', 
+                        flexShrink: 0,
+                        marginTop: '2px'
+                      }}>📎</span>
+                      <div style={{ 
+                        flex: '1',
+                        minWidth: 0
+                      }}>
+                        <span style={{ 
+                          fontSize: '14px', 
+                          color: '#0c4a6e', 
+                          fontWeight: '500',
+                          wordBreak: 'break-all',
+                          lineHeight: '1.4',
+                          display: 'block',
+                          textAlign: 'left',
+                          whiteSpace: 'normal'
+                        }}>
+                          기존 파일: {editingQna.fileName}
+                        </span>
+                      </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleRemoveExistingFile}
-                      style={{
-                        background: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '4px 8px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: '600'
-                      }}
-                    >
-                      삭제
-                    </button>
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'flex-end' 
+                    }}>
+                      <button
+                        type="button"
+                        onClick={handleRemoveExistingFile}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '4px 8px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '600'
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -357,16 +405,37 @@ const QnaModal: React.FC<QnaModalProps> = ({
                     padding: '12px',
                     background: '#fef2f2',
                     border: '1px solid #ef4444',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
+                    borderRadius: '8px'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '16px', color: '#ef4444' }}>🗑️</span>
-                      <span style={{ fontSize: '14px', color: '#991b1b', fontWeight: '500' }}>
-                        기존 파일: {editingQna.fileName}
-                      </span>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      gap: '8px',
+                      marginBottom: '8px'
+                    }}>
+                      <span style={{ 
+                        fontSize: '16px', 
+                        color: '#ef4444', 
+                        flexShrink: 0,
+                        marginTop: '2px'
+                      }}>🗑️</span>
+                      <div style={{ 
+                        flex: '1',
+                        minWidth: 0
+                      }}>
+                        <span style={{ 
+                          fontSize: '14px', 
+                          color: '#991b1b', 
+                          fontWeight: '500',
+                          wordBreak: 'break-all',
+                          lineHeight: '1.4',
+                          display: 'block',
+                          textAlign: 'left',
+                          whiteSpace: 'normal'
+                        }}>
+                          기존 파일: {editingQna.fileName}
+                        </span>
+                      </div>
                     </div>
                     <span style={{
                       fontSize: '11px',
@@ -383,8 +452,8 @@ const QnaModal: React.FC<QnaModalProps> = ({
                 
                 <div style={{
                   border: '2px dashed #e2e8f0',
-                  borderRadius: '12px',
-                  padding: '20px',
+                  borderRadius: isSmallMobile ? '8px' : isMobile ? '10px' : '12px',
+                  padding: isSmallMobile ? '12px' : isMobile ? '16px' : '20px',
                   textAlign: 'center',
                   transition: 'all 0.2s ease',
                   background: '#f8fafc'
@@ -400,36 +469,61 @@ const QnaModal: React.FC<QnaModalProps> = ({
                   {formData.file ? (
                     <div>
                       <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
                         padding: '12px',
                         background: 'white',
                         borderRadius: '8px',
                         border: '1px solid #e2e8f0',
                         marginBottom: '12px'
                       }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '16px', color: '#10b981' }}>📎</span>
-                          <span style={{ fontSize: '14px', color: '#374151' }}>
-                            {formData.file.name}
-                          </span>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'flex-start', 
+                          gap: '8px',
+                          marginBottom: '8px'
+                        }}>
+                          <span style={{ 
+                            fontSize: '16px', 
+                            color: '#10b981',
+                            flexShrink: 0,
+                            marginTop: '2px'
+                          }}>📎</span>
+                          <div style={{ 
+                            flex: '1',
+                            minWidth: 0
+                          }}>
+                            <span style={{ 
+                              fontSize: '14px', 
+                              color: '#374151',
+                              wordBreak: 'break-all',
+                              lineHeight: '1.4',
+                              display: 'block',
+                              textAlign: 'left',
+                              whiteSpace: 'normal'
+                            }}>
+                              {formData.file.name}
+                            </span>
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={handleFileRemove}
-                          style={{
-                            background: '#ef4444',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            padding: '4px 8px',
-                            cursor: 'pointer',
-                            fontSize: '12px'
-                          }}
-                        >
-                          삭제
-                        </button>
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'flex-end' 
+                        }}>
+                          <button
+                            type="button"
+                            onClick={handleFileRemove}
+                            style={{
+                              background: '#ef4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              padding: '4px 8px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            삭제
+                          </button>
+                        </div>
                       </div>
                       {!isValidFile(formData.file) && (
                         <div style={{
@@ -450,10 +544,10 @@ const QnaModal: React.FC<QnaModalProps> = ({
                           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                           color: 'white',
                           border: 'none',
-                          borderRadius: '8px',
-                          padding: '12px 24px',
+                          borderRadius: isSmallMobile ? '6px' : isMobile ? '7px' : '8px',
+                          padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 20px' : '12px 24px',
                           cursor: 'pointer',
-                          fontSize: '14px',
+                          fontSize: isSmallMobile ? '12px' : isMobile ? '13px' : '14px',
                           fontWeight: '600',
                           transition: 'all 0.2s ease'
                         }}
@@ -467,9 +561,10 @@ const QnaModal: React.FC<QnaModalProps> = ({
                         파일 선택
                       </button>
                       <div style={{
-                        fontSize: '12px',
+                        fontSize: isSmallMobile ? '10px' : isMobile ? '11px' : '12px',
                         color: '#6b7280',
-                        marginTop: '8px'
+                        marginTop: isSmallMobile ? '6px' : isMobile ? '7px' : '8px',
+                        lineHeight: '1.4'
                       }}>
                         PDF, JPG, PNG, GIF 파일만 가능 (최대 10MB)
                       </div>
@@ -557,7 +652,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
 
         {/* 모달 푸터 */}
         <div style={{
-          padding: isSmallMobile ? '16px 20px 20px 20px' : isMobile ? '20px 24px 24px 24px' : '24px 32px 32px 32px',
+          padding: isSmallMobile ? '12px 16px 16px 16px' : isMobile ? '16px 20px 20px 20px' : '24px 32px 32px 32px',
           borderTop: '1px solid #f1f5f9',
           display: 'flex',
           gap: isSmallMobile ? '8px' : isMobile ? '12px' : '16px',
@@ -568,7 +663,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
             <button
               onClick={onCancel}
               style={{
-                padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 20px' : '14px 28px',
+                padding: isSmallMobile ? '6px 12px' : isMobile ? '8px 16px' : '14px 28px',
                 backgroundColor: '#ef4444',
                 color: 'white',
                 border: 'none',
@@ -595,7 +690,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
           <button
             onClick={onClose}
             style={{
-              padding: isSmallMobile ? '10px 20px' : isMobile ? '12px 24px' : '14px 28px',
+              padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 20px' : '14px 28px',
               backgroundColor: 'white',
               color: '#64748b',
               border: '2px solid #e2e8f0',
@@ -626,7 +721,7 @@ const QnaModal: React.FC<QnaModalProps> = ({
             onClick={onSubmit}
             disabled={isSubmitting}
             style={{
-              padding: isSmallMobile ? '10px 20px' : isMobile ? '12px 24px' : '14px 28px',
+              padding: isSmallMobile ? '8px 16px' : isMobile ? '10px 20px' : '14px 28px',
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               border: 'none',

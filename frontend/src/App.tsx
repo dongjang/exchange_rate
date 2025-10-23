@@ -13,6 +13,7 @@ import NoticePage from './components/user/NoticePage';
 import QnaPage from './components/user/QnaPage';
 import RemittanceApplyPage from './components/user/RemittanceApplyPage';
 import RemittanceHistoryPage from './components/user/RemittanceHistoryPage';
+import ScrollToTop from './components/ScrollToTop';
 import { api } from './services/api';
 import { authAtom, setAuthAtom } from './store/authStore';
 import { countryAtom } from './store/countryStore';
@@ -105,6 +106,7 @@ function AppContent() {
   return (
     <div className="app">
       <GlobalLoading />
+      <ScrollToTop />
         <>
           {!isNotFoundPage && (
             <Header user={userInfo} onUserUpdated={setUserInfo}/>

@@ -65,8 +65,9 @@ export function RemitSimulationModal({ isOpen, onClose, rates }: RemitSimulation
   const parsedAmount = parseFloat(numericAmount) || 0;
   const rate = rates[currency] ? 1 / rates[currency] : 0;
   const fee = useMemo(() => Math.floor(parsedAmount * FEE_RATE), [parsedAmount]);
-  const krwRate = rates['KRW'] || 0;
+  const krwRate = rates['USD'] || 0; // USD 환율이 1달러 = X원 형태로 저장됨
   
+
   // 선택된 통화로 변환된 금액 계산 (입력한 원화 금액 ÷ 선택된 외화 환율)
   const convertedAmount = useMemo(() => {
     if (!parsedAmount || !currency || !exchangeRates[currency]) return 0;
@@ -186,7 +187,6 @@ export function RemitSimulationModal({ isOpen, onClose, rates }: RemitSimulation
                 value={selectedCurrencyOption}
                 onChange={opt => {
                   setCurrency(opt?.value || '');
-                  setAmount(''); // 통화 변경 시 송금액 초기화
                 }}
                 isSearchable
                 placeholder={isSmallMobile ? "국가/통화 검색" : isMobile ? "국가/통화 검색" : "국가/통화명/통화로 검색"}
@@ -228,26 +228,14 @@ export function RemitSimulationModal({ isOpen, onClose, rates }: RemitSimulation
           color: '#222', 
           boxShadow: '0 1px 4px rgba(30,41,59,0.06)' 
         }}>
-          {krwRate > 0 && (
+          {currency && exchangeRates[currency] && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontWeight: 500, color: '#2563eb' }}>
               <span>현재 원화 환율</span>
-              <span>1 USD = {krwRate.toLocaleString(undefined, { maximumFractionDigits: 2 })} KRW</span>
+              <span>
+                1 {getCurrencyDisplayName(currency)} = {exchangeRates[currency].toLocaleString(undefined, { maximumFractionDigits: 2 })} 원
+              </span>
             </div>
           )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span>환율</span>
-            <span>
-              1 KRW = {
-                krwRate && rates[currency] && currency
-                  ? (
-                      currency === 'USD'
-                        ? (1 / krwRate).toFixed(2)
-                        : (rates[currency] / krwRate).toFixed(2)
-                    )
-                  : '-'
-              } {currency}
-            </span>
-          </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <span>수수료 (1% : 원)</span>
             <span>{fee.toLocaleString()}</span>
@@ -270,15 +258,15 @@ export function RemitSimulationModal({ isOpen, onClose, rates }: RemitSimulation
         <button
           onClick={onClose}
           style={{
-            marginTop: '2.2rem',
+            marginTop: isSmallMobile ? '1.5rem' : isMobile ? '1.8rem' : '2.2rem',
             width: '100%',
             background: '#2563eb',
             color: '#fff',
             border: 'none',
-            borderRadius: 8,
-            padding: '0.9rem 0',
+            borderRadius: isSmallMobile ? 6 : isMobile ? 7 : 8,
+            padding: isSmallMobile ? '0.6rem 0' : isMobile ? '0.7rem 0' : '0.9rem 0',
             fontWeight: 700,
-            fontSize: '1.08rem',
+            fontSize: isSmallMobile ? '0.9rem' : isMobile ? '0.95rem' : '1.08rem',
             cursor: 'pointer',
             boxShadow: '0 1px 4px rgba(30,41,59,0.07)'
           }}
