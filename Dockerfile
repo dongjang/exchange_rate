@@ -2,24 +2,39 @@
 
 # Stage 1: Build Backend
 FROM gradle:8-jdk17-alpine AS backend-build
+
+# Disable Gradle daemon completely and fix permissions
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+ENV GRADLE_USER_HOME=/home/gradle/.gradle
+
+# Fix Gradle permissions and ensure proper cache directory setup
+USER root
+RUN mkdir -p /home/gradle/.gradle && \
+    chown -R gradle:gradle /home/gradle && \
+    chmod -R 755 /home/gradle/.gradle
+
+USER gradle
 WORKDIR /app
-COPY build.gradle settings.gradle ./
-COPY gradle/ ./gradle/
+
+# Copy gradle files first for better caching
+COPY --chown=gradle:gradle build.gradle settings.gradle ./
+COPY --chown=gradle:gradle gradle/ ./gradle/
+
+# Download dependencies with proper permissions
 RUN gradle dependencies --no-daemon
-COPY src/ ./src/
+
+# Copy source code
+COPY --chown=gradle:gradle src/ ./src/
+
+# Build application
 RUN gradle build -x test --no-daemon
 
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre
 
-# Set timezone
-ENV TZ=Asia/Seoul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
     curl \
-    tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # Create app user
