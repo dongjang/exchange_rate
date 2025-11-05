@@ -128,8 +128,16 @@ echo
 # ============================================
 # 3단계: User App 시작
 # ============================================
-echo "3단계: User App 시작 중..."
-docker-compose -f docker-compose.prod.yml up -d --build
+echo "3단계: User App 빌드 중..."
+
+# Docker 빌드 캐시 정리 (관리자 앱 빌드와의 충돌 방지)
+echo "Docker 빌드 캐시 정리 중..."
+docker builder prune -f > /dev/null 2>&1 || true
+
+# User App 빌드 및 시작
+docker-compose -f docker-compose.prod.yml build --no-cache
+echo "3단계-2: User App 시작 중..."
+docker-compose -f docker-compose.prod.yml up -d
 
 # User App 시작 대기
 echo "User App 시작 대기 중..."
