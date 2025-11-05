@@ -4,14 +4,14 @@
 FROM gradle:8-jdk17-alpine AS backend-build
 
 # Disable Gradle daemon completely and fix permissions
-ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dorg.gradle.configureondemand=false"
 ENV GRADLE_USER_HOME=/home/gradle/.gradle
 
 # Fix Gradle permissions and ensure proper cache directory setup
 USER root
-RUN mkdir -p /home/gradle/.gradle && \
-    chown -R gradle:gradle /home/gradle && \
-    chmod -R 755 /home/gradle/.gradle
+RUN mkdir -p /home/gradle/.gradle /app && \
+    chown -R gradle:gradle /home/gradle /app && \
+    chmod -R 777 /home/gradle/.gradle /app
 
 USER gradle
 WORKDIR /app
@@ -20,14 +20,23 @@ WORKDIR /app
 COPY --chown=gradle:gradle build.gradle settings.gradle ./
 COPY --chown=gradle:gradle gradle/ ./gradle/
 
-# Download dependencies with proper permissions
-RUN gradle dependencies --no-daemon
+# Create gradle.properties to disable daemon and configure build
+RUN echo "org.gradle.daemon=false" > gradle.properties && \
+    echo "org.gradle.parallel=false" >> gradle.properties && \
+    echo "org.gradle.configureondemand=false" >> gradle.properties && \
+    echo "org.gradle.caching=false" >> gradle.properties
 
-# Copy source code
+# Ensure /app/.gradle directory has proper permissions
+USER root
+RUN mkdir -p /app/.gradle && chown -R gradle:gradle /app/.gradle && chmod -R 777 /app/.gradle
+USER gradle
+
+# Skip dependencies step and build directly (build will download dependencies automatically)
+# This avoids the permission issue with gradle dependencies command
 COPY --chown=gradle:gradle src/ ./src/
 
-# Build application
-RUN gradle build -x test --no-daemon
+# Build application (this will download dependencies automatically)
+RUN gradle build -x test --no-daemon --no-build-cache
 
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre
