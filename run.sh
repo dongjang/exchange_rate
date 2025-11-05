@@ -74,6 +74,17 @@ echo "1단계: 기존 컨테이너 및 프로세스 완전 정리 중..."
 echo "User App Java 프로세스 종료 중..."
 # admin-app은 보호하고 user-app 관련 프로세스만 종료
 sudo pkill -f "exproject-user-app" 2>/dev/null || true
+sudo pkill -f "server.port=8081" 2>/dev/null || true
+
+# 8081 포트를 사용하는 프로세스 강제 종료
+PID_8081=$(sudo lsof -ti:8081 2>/dev/null || true)
+if [ ! -z "$PID_8081" ]; then
+    echo "8081 포트 사용 프로세스 종료 중... (PID: $PID_8081)"
+    sudo kill -9 $PID_8081 2>/dev/null || true
+    sleep 2
+else
+    echo "8081 포트를 사용하는 프로세스가 없습니다."
+fi
 sleep 2
 
 # Admin 관련 컨테이너 보호 확인
